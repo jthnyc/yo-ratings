@@ -1,19 +1,7 @@
-import React from "react";
+// import React from 'react';
 
-const MovieDetail = ({ title, year, id, poster }) => {
-  return (
-    <li>
-      <div>
-        <img src={poster} alt="film-poster" />
-      </div>
-      <div>
-        <p>
-          {title} ({year})
-        </p>
-      </div>
-      <button>More</button>
-    </li>
-  );
-};
+// const MovieDetail = () => {
+//     return (  );
+// }
 
-export default MovieDetail;
+// export default MovieDetail;

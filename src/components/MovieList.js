@@ -1,9 +1,12 @@
 import React, { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
-import MovieDetail from "../components/MovieDetail";
+import MovieCard from "../components/MovieCard";
 
 const MovieList = () => {
-  const { title, searchResult } = useContext(AppContext);
+  const { title, searchResult, onOpenDetail, selected } = useContext(
+    AppContext
+  );
+  //   console.log("selected in MOVIELIST: ", selected);
   return (
     <div>
       {title ? (
@@ -15,12 +18,14 @@ const MovieList = () => {
             <ul>
               {searchResult.map((movie) => {
                 return (
-                  <MovieDetail
+                  <MovieCard
                     key={movie.imdbID}
                     title={movie.Title}
                     year={movie.Year}
                     poster={movie.Poster}
                     id={movie.imdbID}
+                    onOpenDetail={onOpenDetail}
+                    selected={selected}
                   />
                 );
               })}
