@@ -12,33 +12,29 @@ const AppContextProvider = (props) => {
   const [selected, setSelected] = useState({});
   const [url, setUrl] = useState(API_URL);
 
-  console.log("SELECTED ===== ", selected);
-  // fetching movie data from omdb api
+  console.log("SELECTED MOVIE IS: ", selected, "WITH ID: ", selected.imdbID);
+  // fetching first time using s parameter for search
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios(url);
-      //   console.log("URL: ", url);
-      //   console.log("RESPONSE == ", response);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
-      //   console.log("unique movies == ", uniqueMovies);
       setSearchResult(uniqueMovies);
     };
     fetchData();
   }, [url]);
 
+  // fetching second time using i parameter for imdb id
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios(url);
       const selectedMovie = response.data;
-      //   console.log("URL IN SECOND FETCH: ", url);
-      //   console.log("DATA IN SECOND FETCH: ", response.data);
-      //   console.log("SELECTED MOVIE: ", selectedMovie);
       setSelected(selectedMovie);
     };
     fetchData();
   }, [url]);
 
+  // search result can sometimes return duplicates
   const filterUniqueMovies = (movieArr) => {
     let uniqueMovieIDs = new Set(movieArr.map((movie) => movie.imdbID));
     let uniqueMovies = [];
@@ -48,12 +44,9 @@ const AppContextProvider = (props) => {
     return uniqueMovies;
   };
 
+  // using the movie selected to create a new search URL
   const openDetail = (id) => {
-    // console.log("ID AS PARAMETER", id);
-    // setIMDB(id)
     setUrl(API_URL + `&i=${id}`);
-    // const selectedMovie = searchResult.find((movie) => movie.imdbID === id);
-    // console.log("SELECTED MOVIE: ", selectedMovie);
   };
 
   return (

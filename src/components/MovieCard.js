@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../contexts/AppContext";
 
-const MovieCard = ({ title, year, id, poster, onOpenDetail, selected }) => {
+const MovieCard = ({ title, year, id, poster, onOpenDetail }) => {
+  const { selected } = useContext(AppContext);
+  // console.log("SELECTED: ", selected);
   return (
     <li>
       <div>
@@ -11,14 +14,7 @@ const MovieCard = ({ title, year, id, poster, onOpenDetail, selected }) => {
           {title} ({year})
         </p>
       </div>
-      <button onClick={() => onOpenDetail(id)}>More</button>
-      {selected ? (
-        <div>{console.log("selected in card: ", selected)}</div>
-      ) : (
-        <div>
-          <h5>None selected</h5>
-        </div>
-      )}
+      <button onClick={() => onOpenDetail(id)}>Details</button>
     </li>
   );
 };
