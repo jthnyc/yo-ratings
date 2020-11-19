@@ -3,7 +3,13 @@ import { AppContext } from "../contexts/AppContext";
 import MovieCard from "../components/MovieCard";
 
 const MovieList = () => {
-  const { title, searchResult, onOpenDetail } = useContext(AppContext);
+  const {
+    title,
+    searchResult,
+    onOpenDetail,
+    onUpVote,
+    onDownVote,
+  } = useContext(AppContext);
   //   console.log("selected in MOVIELIST: ", selected);
   return (
     <div>
@@ -23,6 +29,8 @@ const MovieList = () => {
                     poster={movie.Poster}
                     id={movie.imdbID}
                     onOpenDetail={onOpenDetail}
+                    onUpVote={onUpVote}
+                    onDownVote={onDownVote}
                   />
                 );
               })}

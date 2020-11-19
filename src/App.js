@@ -1,3 +1,4 @@
+import MovieDetail from "./components/MovieDetail";
 import MovieList from "./components/MovieList";
 import SearchBar from "./components/SearchBar";
 // import "./App.css";
@@ -10,6 +11,7 @@ function App() {
         <header className="App-header">
           <SearchBar />
           <MovieList />
+          <MovieDetail />
         </header>
       </AppContextProvider>
     </div>

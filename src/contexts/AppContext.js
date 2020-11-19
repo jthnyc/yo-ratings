@@ -11,8 +11,11 @@ const AppContextProvider = (props) => {
   const [title, setTitle] = useState("");
   const [selected, setSelected] = useState({});
   const [url, setUrl] = useState(API_URL);
+  let [upCount, setUpCount] = useState(0);
+  let [downCount, setDownCount] = useState(0);
 
-  console.log("SELECTED MOVIE IS: ", selected, "WITH ID: ", selected.imdbID);
+  //   console.log("SELECTED MOVIE IS: ", selected, "WITH ID: ", selected.imdbID);
+
   // fetching first time using s parameter for search
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +52,18 @@ const AppContextProvider = (props) => {
     setUrl(API_URL + `&i=${id}`);
   };
 
+  const handleUpCount = () => {
+    console.log("UP VOTE!");
+    setUpCount((upCount += 1));
+    console.log("UP COUNT: ", upCount);
+  };
+
+  const handleDownCount = () => {
+    console.log("DOWN VOTE!");
+    setDownCount((downCount += 1));
+    console.log("DOWN COUNT: ", downCount);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -60,7 +75,13 @@ const AppContextProvider = (props) => {
         setUrl,
         API_URL,
         selected,
+        upCount,
+        setUpCount,
+        downCount,
+        setDownCount,
         onOpenDetail: openDetail,
+        onUpVote: handleUpCount,
+        onDownVote: handleDownCount,
       }}
     >
       {props.children}
