@@ -37,13 +37,14 @@ const AppContextProvider = (props) => {
     fetchData();
   }, [url]);
 
-  // search result can sometimes return duplicates
+  // search result can sometimes return duplicates, sorting by year as well
   const filterUniqueMovies = (movieArr) => {
     let uniqueMovieIDs = new Set(movieArr.map((movie) => movie.imdbID));
     let uniqueMovies = [];
     uniqueMovieIDs.forEach((id) =>
       uniqueMovies.push(movieArr.find((movie) => movie.imdbID === id))
     );
+    uniqueMovies.sort((a, b) => a.Year - b.Year);
     return uniqueMovies;
   };
 
