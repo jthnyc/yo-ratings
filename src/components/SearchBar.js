@@ -41,7 +41,7 @@ const Wrapper = styled.div`
   border-style: none;
   margin: 2em 2em;
   padding: 2em 2em;
-  background-color: #c2e7da;
+  background-color: #1a1b41;
   border-radius: 0.5em;
   box-shadow: 0 0 10px #c2e7da;
 `;
@@ -72,17 +72,20 @@ const SearchInputFieldContainer = styled.div`
 
 const SearchInputField = styled.input`
   border: transparent;
-  border-bottom: 1px solid #1a1b41;
+  // border-bottom: 1px solid #1a1b41;
+  border-bottom: 1px solid #f1ffe7;
   width: 95%;
   outline: none;
-  // margin-left: 15px;
   font-size: 18px;
-  background-color: #c2e7da;
+  background-color: #1a1b41;
+  color: #f1ffe7;
 `;
 
 const Button = styled.button`
   border-style: none;
-  background-color: #c2e7da;
+  // background-color: #c2e7da;
+  color: #c2e7da;
+  background-color: #1a1b41;
   height: 90px;
   width: 100%;
   outline: none;

@@ -51,6 +51,7 @@ export default MovieList;
 
 const MovieContainer = styled.div`
   border: 1px solid black;
+  border-style: none;
   margin: 2em 2em;
   padding: 2em 2em;
   background-color: #6290c3;
@@ -68,10 +69,8 @@ const SearchQuery = styled.h5`
 `;
 
 const MovieListWrapper = styled.ul`
-  //   border: 1px solid green;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
   grid-auto-rows: minmax(20rem, auto);
-  max-width: 1440px;
   padding: 0;
 `;
