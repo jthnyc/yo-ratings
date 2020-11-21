@@ -39,9 +39,9 @@ const MovieList = () => {
           </div>
         </MovieListContainer>
       ) : (
-        <div>
+        <MovieListContainer>
           <h5>No result</h5>
-        </div>
+        </MovieListContainer>
       )}
     </MovieContainer>
   );
@@ -59,7 +59,7 @@ const MovieContainer = styled.div`
 `;
 
 const MovieListContainer = styled.div`
-  border: 1px solid red;
+  //   border: 1px solid red;
 `;
 
 const SearchQuery = styled.h5`
@@ -68,9 +68,10 @@ const SearchQuery = styled.h5`
 `;
 
 const MovieListWrapper = styled.ul`
-  border: 1px solid green;
+  //   border: 1px solid green;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
   grid-auto-rows: minmax(20rem, auto);
   max-width: 1440px;
+  padding: 0;
 `;

@@ -15,15 +15,17 @@ const MovieCard = ({
   return (
     <MovieCardContainer>
       <li>
-        <Poster>
-          <img src={poster} alt="film-poster" />
-        </Poster>
-        <div>
-          <p>
-            {title} ({year})
-          </p>
-        </div>
-        <button onClick={() => onOpenDetail(id)}>Details</button>
+        <MovieDisplay>
+          <MovieCardButton onClick={() => onOpenDetail(id)}>
+            <Poster>
+              <img src={poster} alt="film-poster" />
+            </Poster>
+            <p>
+              {title} ({year})
+            </p>
+          </MovieCardButton>
+        </MovieDisplay>
+
         <VotingContainer>
           <UpVote onClick={onUpVote}>
             <VoteCount>{upCount}</VoteCount>👍
@@ -40,35 +42,57 @@ const MovieCard = ({
 export default MovieCard;
 
 const MovieCardContainer = styled.div`
-  border: 1px solid yellow;
+  // border: 1px solid yellow;
+  margin: 0.3rem 0.3rem;
   list-style: none;
   // width: 20em;
 `;
 
+const MovieDisplay = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const MovieCardButton = styled.button`
+  background: #1a1b41;
+  color: #f1ff37;
+`;
+
 const Poster = styled.div`
-  border: 1px solid lime;
+  // border: 1px solid lime;
   display: flex;
   justify-content: center;
 `;
 
 const VotingContainer = styled.div`
+  // border: 1px dotted white;
   display: flex;
   justify-content: center;
-  border: 1px dotted white;
+  height: 50px;
 `;
 
 const UpVote = styled.button`
-  border: 1px solid pink;
+  border: 0.5px solid #f1ffe7;
+  // border-style: none;
   display: flex;
-  background-color: #f1ffe7;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1b41;
+  color: #baff29;
+  border-radius: 1rem;
+  width: 80px;
 `;
 
 const DownVote = styled.button`
-  border: 1px solid orange;
+  border: 0.5px solid #f1ffe7;
   // border-style: none;
   display: flex;
-  width: 50px;
-  background-color: #f1ffe7;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  border-radius: 1rem;
+  background-color: #1a1b41;
+  color: #baff29;
 `;
 
 const VoteCount = styled.h5`
