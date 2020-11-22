@@ -12,7 +12,6 @@ const AppContextProvider = (props) => {
   const [url, setUrl] = useState(API_URL);
   const [selected, setSelected] = useState({});
   const [votedArr, setVotedArr] = useState([]);
-  // console.log("voted: ", votedArr);
 
   // fetching first time using s parameter for search
   useEffect(() => {
@@ -20,9 +19,6 @@ const AppContextProvider = (props) => {
       const response = await Axios(url);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
-      // const moviesWithVoteCountAttribute = addAttributeToMovies(uniqueMovies);
-      // console.log("search result: ", moviesWithVoteCountAttribute);
-      // setSearchResult(moviesWithVoteCountAttribute);
       setSearchResult(uniqueMovies);
     };
     fetchData();
@@ -50,49 +46,29 @@ const AppContextProvider = (props) => {
     return uniqueMovies;
   };
 
-  // const addAttributeToMovies = (movieArr) => {
-  //   let attributed = movieArr.map((movie) => ({
-  //     ...movie,
-  //     voteCount: { up: 0, down: 0 },
-  //   }));
-  //   return attributed;
-  // };
-
   // using the movie selected to create a new search URL
-  // has to use a second useEffect because otherwise url is not updated
+  // have to use a second useEffect because otherwise url is not updated
   const openDetail = async (id) => {
     setUrl(API_URL + `&i=${id}`);
   };
 
   const handleUpCount = (id) => {
-    console.log("ID of clicked: ", id);
-
-    // essentially need to check if the clicked movie already exists in voted,
-    // if yes, up the count in both voted, then update searchResult
-    // otherwise, add to voted, then update searchResult
-    // either way need to update searchResult
     const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
-    // const updatedMovie = { ...clickedMovie, up: clickedMovie.voteCount.up + 1 };
-    // console.log("UPDATED MOVIE: ", updatedMovie);
 
     let inVotedArr = votedArr.find((movie) => movie.imdbID === id);
-    if (inVotedArr) {
-      let i = votedArr.indexOf(inVotedArr);
-      votedArr[i].up += 1;
-      console.log("votedArr: ", votedArr);
-      // setVotedArr([...votedArr, inVotedArr.up += 1]);
-    } else {
-      let newData = { ...clickedMovie, up: 1 };
-      setVotedArr([...votedArr, { ...newData }]);
-    }
+    inVotedArr
+      ? (votedArr.up += 1)
+      : setVotedArr([...votedArr, { ...clickedMovie, up: 1 }]);
+    // if (inVotedArr) {
+    //   votedArr.up += 1;
+    // } else {
+    //   let newData = { ...clickedMovie, up: 1 };
+    //   setVotedArr([...votedArr, { ...newData }]);
+    // }
 
     const selectedMovie = searchResult.find((movie) => movie.imdbID === id);
-    // console.log("THIS IS THE ONE CLICKED ON: ", selectedMovie);
     if (selectedMovie) {
-      // let i = searchResult.indexOf(selectedMovie);
-      console.log("SELECTED MOVIE: ", selectedMovie);
       selectedMovie.up ? (selectedMovie.up += 1) : (selectedMovie.up = 1);
-
       const newResult = [];
       searchResult.forEach((movie) =>
         movie.imdbID === selectedMovie
@@ -106,19 +82,21 @@ const AppContextProvider = (props) => {
   const handleDownCount = (id) => {
     const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
     const inVotedArr = votedArr.find((movie) => movie.imdbID === id);
-    if (inVotedArr) {
-      inVotedArr.down ? (inVotedArr.down += 1) : (inVotedArr.down = 1);
-      // let i = votedArr.indexOf(inVotedArr);
-      // votedArr[i].down += 1;
-    } else {
-      let newData = { ...clickedMovie, down: 1 };
-      setVotedArr([...votedArr, { ...newData }]);
-    }
+    inVotedArr
+      ? votedArr.down
+        ? (inVotedArr.down += 1)
+        : (inVotedArr.down = 1)
+      : setVotedArr([...votedArr, { ...clickedMovie, down: 1 }]);
+    // if (inVotedArr) {
+    //   inVotedArr.down ? (inVotedArr.down += 1) : (inVotedArr.down = 1);
+    // } else {
+    //   let newData = { ...clickedMovie, down: 1 };
+    //   setVotedArr([...votedArr, { ...newData }]);
+    // }
 
     const selected = searchResult.find((movie) => movie.imdbID === id);
     if (selected) {
       selected.down ? (selected.down += 1) : (selected.down = 1);
-
       const newResult = [];
       searchResult.forEach((movie) =>
         movie.imdbID === selected
