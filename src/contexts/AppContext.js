@@ -9,12 +9,10 @@ const API_URL = `https://omdbapi.com/?apikey=${API_KEY}`;
 const AppContextProvider = (props) => {
   const [searchResult, setSearchResult] = useState([]);
   const [title, setTitle] = useState("");
-  const [selected, setSelected] = useState({});
   const [url, setUrl] = useState(API_URL);
-  let [upCount, setUpCount] = useState(0);
-  let [downCount, setDownCount] = useState(0);
-
-  //   console.log("SELECTED MOVIE IS: ", selected, "WITH ID: ", selected.imdbID);
+  const [selected, setSelected] = useState({});
+  const [votedArr, setVotedArr] = useState([]);
+  // console.log("voted: ", votedArr);
 
   // fetching first time using s parameter for search
   useEffect(() => {
@@ -22,6 +20,9 @@ const AppContextProvider = (props) => {
       const response = await Axios(url);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
+      // const moviesWithVoteCountAttribute = addAttributeToMovies(uniqueMovies);
+      // console.log("search result: ", moviesWithVoteCountAttribute);
+      // setSearchResult(moviesWithVoteCountAttribute);
       setSearchResult(uniqueMovies);
     };
     fetchData();
@@ -31,7 +32,8 @@ const AppContextProvider = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios(url);
-      const selectedMovie = response.data;
+      const selectedMovie = response.data || {};
+      // console.log("SELECTED movie: ", selectedMovie);
       setSelected(selectedMovie);
     };
     fetchData();
@@ -48,21 +50,83 @@ const AppContextProvider = (props) => {
     return uniqueMovies;
   };
 
+  // const addAttributeToMovies = (movieArr) => {
+  //   let attributed = movieArr.map((movie) => ({
+  //     ...movie,
+  //     voteCount: { up: 0, down: 0 },
+  //   }));
+  //   return attributed;
+  // };
+
   // using the movie selected to create a new search URL
-  const openDetail = (id) => {
+  // has to use a second useEffect because otherwise url is not updated
+  const openDetail = async (id) => {
     setUrl(API_URL + `&i=${id}`);
   };
 
-  const handleUpCount = () => {
-    console.log("UP VOTE!");
-    setUpCount((upCount += 1));
-    console.log("UP COUNT: ", upCount);
+  const handleUpCount = (id) => {
+    console.log("ID of clicked: ", id);
+
+    // essentially need to check if the clicked movie already exists in voted,
+    // if yes, up the count in both voted, then update searchResult
+    // otherwise, add to voted, then update searchResult
+    // either way need to update searchResult
+    const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
+    // const updatedMovie = { ...clickedMovie, up: clickedMovie.voteCount.up + 1 };
+    // console.log("UPDATED MOVIE: ", updatedMovie);
+
+    let inVotedArr = votedArr.find((movie) => movie.imdbID === id);
+    if (inVotedArr) {
+      let i = votedArr.indexOf(inVotedArr);
+      votedArr[i].up += 1;
+      console.log("votedArr: ", votedArr);
+      // setVotedArr([...votedArr, inVotedArr.up += 1]);
+    } else {
+      let newData = { ...clickedMovie, up: 1 };
+      setVotedArr([...votedArr, { ...newData }]);
+    }
+
+    const selectedMovie = searchResult.find((movie) => movie.imdbID === id);
+    // console.log("THIS IS THE ONE CLICKED ON: ", selectedMovie);
+    if (selectedMovie) {
+      // let i = searchResult.indexOf(selectedMovie);
+      console.log("SELECTED MOVIE: ", selectedMovie);
+      selectedMovie.up ? (selectedMovie.up += 1) : (selectedMovie.up = 1);
+
+      const newResult = [];
+      searchResult.forEach((movie) =>
+        movie.imdbID === selectedMovie
+          ? newResult.push(selectedMovie)
+          : newResult.push(movie)
+      );
+      setSearchResult([...newResult]);
+    }
   };
 
-  const handleDownCount = () => {
-    console.log("DOWN VOTE!");
-    setDownCount((downCount += 1));
-    console.log("DOWN COUNT: ", downCount);
+  const handleDownCount = (id) => {
+    const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
+    const inVotedArr = votedArr.find((movie) => movie.imdbID === id);
+    if (inVotedArr) {
+      inVotedArr.down ? (inVotedArr.down += 1) : (inVotedArr.down = 1);
+      // let i = votedArr.indexOf(inVotedArr);
+      // votedArr[i].down += 1;
+    } else {
+      let newData = { ...clickedMovie, down: 1 };
+      setVotedArr([...votedArr, { ...newData }]);
+    }
+
+    const selected = searchResult.find((movie) => movie.imdbID === id);
+    if (selected) {
+      selected.down ? (selected.down += 1) : (selected.down = 1);
+
+      const newResult = [];
+      searchResult.forEach((movie) =>
+        movie.imdbID === selected
+          ? newResult.push(selected)
+          : newResult.push(movie)
+      );
+      setSearchResult([...newResult]);
+    }
   };
 
   return (
@@ -76,13 +140,10 @@ const AppContextProvider = (props) => {
         setUrl,
         API_URL,
         selected,
-        upCount,
-        setUpCount,
-        downCount,
-        setDownCount,
+        votedArr,
         onOpenDetail: openDetail,
-        onUpVote: handleUpCount,
-        onDownVote: handleDownCount,
+        handleUpCount: handleUpCount,
+        handleDownCount: handleDownCount,
       }}
     >
       {props.children}

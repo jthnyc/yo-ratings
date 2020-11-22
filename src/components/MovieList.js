@@ -4,14 +4,8 @@ import MovieCard from "../components/MovieCard";
 import styled from "styled-components";
 
 const MovieList = () => {
-  const {
-    title,
-    searchResult,
-    onOpenDetail,
-    onUpVote,
-    onDownVote,
-  } = useContext(AppContext);
-  //   console.log("selected in MOVIELIST: ", selected);
+  const { title, searchResult, onOpenDetail } = useContext(AppContext);
+  // console.log("search Result in movie List: ", searchResult);
   return (
     <MovieContainer>
       {title ? (
@@ -29,9 +23,9 @@ const MovieList = () => {
                     year={movie.Year}
                     poster={movie.Poster}
                     id={movie.imdbID}
+                    up={movie.up}
+                    down={movie.down}
                     onOpenDetail={onOpenDetail}
-                    onUpVote={onUpVote}
-                    onDownVote={onDownVote}
                   />
                 );
               })}
@@ -40,7 +34,7 @@ const MovieList = () => {
         </MovieListContainer>
       ) : (
         <MovieListContainer>
-          <h5>No result</h5>
+          <SearchQuery>No result</SearchQuery>
         </MovieListContainer>
       )}
     </MovieContainer>

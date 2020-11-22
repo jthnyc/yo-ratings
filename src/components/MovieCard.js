@@ -2,16 +2,9 @@ import React, { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
 
-const MovieCard = ({
-  title,
-  year,
-  id,
-  poster,
-  onOpenDetail,
-  onUpVote,
-  onDownVote,
-}) => {
-  const { upCount, downCount } = useContext(AppContext);
+const MovieCard = ({ title, year, id, up, down, poster, onOpenDetail }) => {
+  const { handleUpCount, handleDownCount } = useContext(AppContext);
+
   return (
     <MovieCardContainer>
       <li>
@@ -27,11 +20,12 @@ const MovieCard = ({
         </MovieDisplay>
 
         <VotingContainer>
-          <UpVote onClick={onUpVote}>
-            <VoteCount>{upCount}</VoteCount>👍
+          <UpVote onClick={() => handleUpCount(id)}>
+            <VoteCount>{up ? up : 0}</VoteCount>
+            👍
           </UpVote>
-          <DownVote onClick={onDownVote}>
-            <VoteCount>{downCount}</VoteCount>👎
+          <DownVote onClick={() => handleDownCount(id)}>
+            <VoteCount>{down ? down : 0}</VoteCount>👎
           </DownVote>
         </VotingContainer>
       </li>
@@ -40,6 +34,21 @@ const MovieCard = ({
 };
 
 export default MovieCard;
+
+// const [votes, setVotes] = useState({ up: 0, down: 0 });
+// const { setCount, count } = useContext(AppContext);
+// console.log("ID IN MOVIE CARD: ", id);
+
+// const handleCount = (id, direction) => {
+//   const countObj = count.hasOwnProperty(id) ? count[id] : { up: 0, down: 0 };
+//   if (direction === "up") {
+//     const updateUp = { ...countObj, up: (countObj.up += 1) };
+//     setCount({ ...count, id: updateUp });
+//   } else {
+//     const updateDown = { ...countObj, down: (countObj.down += 1) };
+//     setCount({ ...count, id: updateDown });
+//   }
+// };
 
 const MovieCardContainer = styled.div`
   // border: 1px solid yellow;

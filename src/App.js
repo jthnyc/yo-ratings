@@ -11,7 +11,7 @@ function App() {
         <header className="App-header">
           <SearchBar />
           <MovieList />
-          <MovieDetail />
+          {/* <MovieDetail /> */}
         </header>
       </AppContextProvider>
     </div>

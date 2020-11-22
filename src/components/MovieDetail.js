@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 const MovieDetail = () => {
   const { selected } = useContext(AppContext);
-  console.log("SELECTED IN DETAIL ==== ", selected);
+  // console.log("SELECTED IN DETAIL ==== ", selected);
   return (
     <MovieDetailCard>
       <h4>Director: {selected.Director}</h4>
