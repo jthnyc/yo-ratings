@@ -11,7 +11,14 @@ const AppContextProvider = (props) => {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState(API_URL);
   const [selected, setSelected] = useState({});
-  const [votedArr, setVotedArr] = useState([]);
+  const [votedArr, setVotedArr] = useState(() => {
+    const localData = localStorage.getItem("votedList");
+    return localData ? JSON.parse(localData) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("votedList", JSON.stringify(votedArr));
+  }, [votedArr]);
 
   // fetching first time using s parameter for search
   useEffect(() => {
@@ -54,7 +61,6 @@ const AppContextProvider = (props) => {
 
   const handleUpCount = (id) => {
     const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
-
     let inVotedArr = votedArr.find((movie) => movie.imdbID === id);
     inVotedArr
       ? (votedArr.up += 1)
