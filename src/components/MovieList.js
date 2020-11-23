@@ -4,8 +4,9 @@ import MovieCard from "../components/MovieCard";
 import styled from "styled-components";
 
 const MovieList = () => {
-  const { title, searchResult, onOpenDetail } = useContext(AppContext);
+  const { title, listSearchResult, selected } = useContext(AppContext);
   // console.log("search Result in movie List: ", searchResult);
+  console.log("SELECTEED IN LIST: === ", selected);
   return (
     <MovieContainer>
       {title ? (
@@ -15,7 +16,7 @@ const MovieList = () => {
           </SearchQuery>
           <div>
             <MovieListWrapper>
-              {searchResult.map((movie) => {
+              {listSearchResult.map((movie) => {
                 return (
                   <MovieCard
                     key={movie.imdbID}
@@ -25,7 +26,8 @@ const MovieList = () => {
                     id={movie.imdbID}
                     up={movie.up}
                     down={movie.down}
-                    onOpenDetail={onOpenDetail}
+                    director={selected.Director}
+                    plot={selected.Plot}
                   />
                 );
               })}

@@ -3,13 +3,13 @@ import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
 
 const SearchBar = () => {
-  const { title, setTitle, setUrl, API_URL } = useContext(AppContext);
+  const { title, setTitle, setListSearchUrl, API_URL } = useContext(AppContext);
 
   return (
     <Wrapper>
       <SearchForm
         onSubmit={(e) => {
-          setUrl(API_URL + `&s=${title}&type=movie`);
+          setListSearchUrl(API_URL + `&s=${title}&type=movie`);
           e.preventDefault();
         }}
       >

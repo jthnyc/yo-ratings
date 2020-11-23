@@ -1,17 +1,27 @@
 import React, { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
-import MovieDetail from "./MovieDetail";
+import DetailFront from "./DetailFront";
+import DetailBack from "./DetailBack";
 
-const MovieCard = ({ title, year, id, up, down, poster }) => {
-  const { handleUpCount, handleDownCount } = useContext(AppContext);
+const MovieCard = ({ title, year, id, up, down, poster, director, plot }) => {
+  const { isFlipped, handleFlip, handleUpCount, handleDownCount } = useContext(
+    AppContext
+  );
 
   return (
     <MovieCardContainer>
       <li>
         <MovieDisplay>
-          <MovieDetail title={title} year={year} id={id} poster={poster} />
+          <MovieCardButton onClick={() => handleFlip(id)}>
+            {isFlipped ? (
+              <DetailBack />
+            ) : (
+              <DetailFront poster={poster} title={title} year={year} />
+            )}
+          </MovieCardButton>
         </MovieDisplay>
+
         <VotingContainer>
           <UpVote onClick={() => handleUpCount(id)}>
             <VoteCount>{up ? up : 0}</VoteCount>
@@ -53,6 +63,21 @@ const MovieCardContainer = styled.div`
 const MovieDisplay = styled.div`
   display: flex;
   justify-content: center;
+  cursor: pointer;
+  transition: transform 1s;
+  backface-visibility: hidden;
+  // &:hover {
+  //   background-color: black;
+  //   -webkit-transform: rotateY(180deg);
+  //   transform: rotateY(180deg);
+  // }
+`;
+
+const MovieCardButton = styled.button`
+  background: #1a1b41;
+  color: #f1ff37;
+  // -webkit-transform: rotateY(180deg);
+  // transform: rotateY(180deg);
 `;
 
 const VotingContainer = styled.div`

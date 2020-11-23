@@ -7,9 +7,10 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 const API_URL = `https://omdbapi.com/?apikey=${API_KEY}`;
 
 const AppContextProvider = (props) => {
-  const [searchResult, setSearchResult] = useState([]);
+  const [listSearchResult, setListSearchResult] = useState([]);
   const [title, setTitle] = useState("");
-  const [url, setUrl] = useState(API_URL);
+  const [listSearchUrl, setListSearchUrl] = useState(API_URL);
+  const [selectedSearchUrl, setSelectedSearchUrl] = useState(API_URL);
   const [selected, setSelected] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [votedArr, setVotedArr] = useState(() => {
@@ -17,37 +18,36 @@ const AppContextProvider = (props) => {
     return localData ? JSON.parse(localData) : [];
   });
 
+  console.log("isFlipped ===== ", isFlipped);
+
   useEffect(() => {
     localStorage.setItem("votedList", JSON.stringify(votedArr));
   }, [votedArr]);
 
-  // fetching first time using s parameter for search
   useEffect(() => {
+    // fetching first time using s parameter for search
     const fetchList = async () => {
-      const response = await Axios(url);
+      const response = await Axios(listSearchUrl);
+      console.log("listSearchURL === ", listSearchUrl);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
-      setSearchResult(uniqueMovies);
+      setListSearchResult(uniqueMovies);
     };
     fetchList();
 
-    if (isFlipped === true) {
-      console.log("button clicked = ", isFlipped);
+    // fetching second time using i parameter for imdb id
+    if (isFlipped !== false) {
+      console.log("isFlipped is now: ", isFlipped);
       const fetchData = async () => {
-        const response = await Axios(url);
-        console.log("url for id search: ", url);
+        const response = await Axios(selectedSearchUrl);
+        console.log("url for id search: ", selectedSearchUrl);
         const selectedMovie = response.data || {};
         console.log("SELECTED movie: ", selectedMovie);
         setSelected(selectedMovie);
       };
       fetchData();
     }
-  }, [isFlipped, setSelected, url]);
-
-  // fetching second time using i parameter for imdb id
-  // useEffect(() => {
-
-  // }, [url]);
+  }, [isFlipped, listSearchUrl, selectedSearchUrl]);
 
   // search result can sometimes return duplicates, sorting by year as well
   const filterUniqueMovies = (movieArr) => {
@@ -61,34 +61,36 @@ const AppContextProvider = (props) => {
   };
 
   // using the movie selected to create a new search URL
-  // have to use a second useEffect because otherwise url is not updated
   const handleFlip = (id) => {
-    setUrl(API_URL + `&i=${id}`);
-    setIsFlipped(!isFlipped);
+    setSelectedSearchUrl(API_URL + `&i=${id}`);
+    setIsFlipped(
+      isFlipped === false ? !isFlipped : (!isFlipped, setSelected({}))
+    );
+    // setIsFlipped(selected);
   };
 
   const handleUpCount = (id) => {
-    const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
+    const clickedMovie = listSearchResult.find((movie) => movie.imdbID === id);
     let inVotedArr = votedArr.find((movie) => movie.imdbID === id);
     inVotedArr
       ? (votedArr.up += 1)
       : setVotedArr([...votedArr, { ...clickedMovie, up: 1 }]);
 
-    const selectedMovie = searchResult.find((movie) => movie.imdbID === id);
+    const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
     if (selectedMovie) {
       selectedMovie.up ? (selectedMovie.up += 1) : (selectedMovie.up = 1);
       const newResult = [];
-      searchResult.forEach((movie) =>
+      listSearchResult.forEach((movie) =>
         movie.imdbID === selectedMovie
           ? newResult.push(selectedMovie)
           : newResult.push(movie)
       );
-      setSearchResult([...newResult]);
+      setListSearchResult([...newResult]);
     }
   };
 
   const handleDownCount = (id) => {
-    const clickedMovie = searchResult.find((movie) => movie.imdbID === id);
+    const clickedMovie = listSearchResult.find((movie) => movie.imdbID === id);
     const inVotedArr = votedArr.find((movie) => movie.imdbID === id);
     inVotedArr
       ? votedArr.down
@@ -102,28 +104,28 @@ const AppContextProvider = (props) => {
     //   setVotedArr([...votedArr, { ...newData }]);
     // }
 
-    const selected = searchResult.find((movie) => movie.imdbID === id);
+    const selected = listSearchResult.find((movie) => movie.imdbID === id);
     if (selected) {
       selected.down ? (selected.down += 1) : (selected.down = 1);
       const newResult = [];
-      searchResult.forEach((movie) =>
+      listSearchResult.forEach((movie) =>
         movie.imdbID === selected
           ? newResult.push(selected)
           : newResult.push(movie)
       );
-      setSearchResult([...newResult]);
+      setListSearchResult([...newResult]);
     }
   };
 
   return (
     <AppContext.Provider
       value={{
-        searchResult,
-        setSearchResult,
+        listSearchResult,
+        setListSearchResult,
         title,
         setTitle,
-        url,
-        setUrl,
+        listSearchUrl,
+        setListSearchUrl,
         API_URL,
         selected,
         setSelected,
