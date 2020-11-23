@@ -3,9 +3,10 @@ import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
 import DetailFront from "./DetailFront";
 import DetailBack from "./DetailBack";
+// import ReactCardFlip from "react-card-flip";
 
-const MovieCard = ({ title, year, id, up, down, poster, director, plot }) => {
-  const { isFlipped, handleFlip, handleUpCount, handleDownCount } = useContext(
+const MovieCard = ({ title, year, id, up, down, poster }) => {
+  const { selected, handleFlip, handleUpCount, handleDownCount } = useContext(
     AppContext
   );
 
@@ -14,18 +15,20 @@ const MovieCard = ({ title, year, id, up, down, poster, director, plot }) => {
       <li>
         <MovieDisplay>
           <MovieCardButton onClick={() => handleFlip(id)}>
-            {isFlipped ? (
+            {/* <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal"> */}
+            {selected.imdbID === id ? (
               <DetailBack />
             ) : (
-              <DetailFront poster={poster} title={title} year={year} />
+              <DetailFront id={id} poster={poster} title={title} year={year} />
             )}
+
+            {/* // </ReactCardFlip> */}
           </MovieCardButton>
         </MovieDisplay>
 
         <VotingContainer>
           <UpVote onClick={() => handleUpCount(id)}>
-            <VoteCount>{up ? up : 0}</VoteCount>
-            👍
+            <VoteCount>{up ? up : 0}</VoteCount>👍
           </UpVote>
           <DownVote onClick={() => handleDownCount(id)}>
             <VoteCount>{down ? down : 0}</VoteCount>👎
@@ -38,21 +41,6 @@ const MovieCard = ({ title, year, id, up, down, poster, director, plot }) => {
 
 export default MovieCard;
 
-// const [votes, setVotes] = useState({ up: 0, down: 0 });
-// const { setCount, count } = useContext(AppContext);
-// console.log("ID IN MOVIE CARD: ", id);
-
-// const handleCount = (id, direction) => {
-//   const countObj = count.hasOwnProperty(id) ? count[id] : { up: 0, down: 0 };
-//   if (direction === "up") {
-//     const updateUp = { ...countObj, up: (countObj.up += 1) };
-//     setCount({ ...count, id: updateUp });
-//   } else {
-//     const updateDown = { ...countObj, down: (countObj.down += 1) };
-//     setCount({ ...count, id: updateDown });
-//   }
-// };
-
 const MovieCardContainer = styled.div`
   // border: 1px solid yellow;
   margin: 0.3rem 0.3rem;
@@ -63,7 +51,6 @@ const MovieCardContainer = styled.div`
 const MovieDisplay = styled.div`
   display: flex;
   justify-content: center;
-  cursor: pointer;
   transition: transform 1s;
   backface-visibility: hidden;
   // &:hover {
@@ -76,6 +63,7 @@ const MovieDisplay = styled.div`
 const MovieCardButton = styled.button`
   background: #1a1b41;
   color: #f1ff37;
+  cursor: pointer;
   // -webkit-transform: rotateY(180deg);
   // transform: rotateY(180deg);
 `;

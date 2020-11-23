@@ -18,8 +18,6 @@ const AppContextProvider = (props) => {
     return localData ? JSON.parse(localData) : [];
   });
 
-  console.log("isFlipped ===== ", isFlipped);
-
   useEffect(() => {
     localStorage.setItem("votedList", JSON.stringify(votedArr));
   }, [votedArr]);
@@ -28,7 +26,7 @@ const AppContextProvider = (props) => {
     // fetching first time using s parameter for search
     const fetchList = async () => {
       const response = await Axios(listSearchUrl);
-      console.log("listSearchURL === ", listSearchUrl);
+      // console.log("LIST search URL = ", listSearchUrl);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
       setListSearchResult(uniqueMovies);
@@ -36,13 +34,12 @@ const AppContextProvider = (props) => {
     fetchList();
 
     // fetching second time using i parameter for imdb id
+    console.log("isFlipped is now: ", isFlipped);
     if (isFlipped !== false) {
-      console.log("isFlipped is now: ", isFlipped);
       const fetchData = async () => {
         const response = await Axios(selectedSearchUrl);
-        console.log("url for id search: ", selectedSearchUrl);
+        // console.log("SELECTED search URL ===== ", selectedSearchUrl);
         const selectedMovie = response.data || {};
-        console.log("SELECTED movie: ", selectedMovie);
         setSelected(selectedMovie);
       };
       fetchData();
@@ -63,9 +60,10 @@ const AppContextProvider = (props) => {
   // using the movie selected to create a new search URL
   const handleFlip = (id) => {
     setSelectedSearchUrl(API_URL + `&i=${id}`);
-    setIsFlipped(
-      isFlipped === false ? !isFlipped : (!isFlipped, setSelected({}))
-    );
+    // setIsFlipped(
+    //   isFlipped === false ? !isFlipped : (!isFlipped, setSelected({}))
+    // );
+    setIsFlipped(!isFlipped);
     // setIsFlipped(selected);
   };
 
