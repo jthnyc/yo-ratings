@@ -1,4 +1,4 @@
-import MovieDetail from "./components/MovieDetail";
+// import MovieDetail from "./components/MovieDetail";
 import MovieList from "./components/MovieList";
 import SearchBar from "./components/SearchBar";
 // import "./App.css";

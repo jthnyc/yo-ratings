@@ -1,24 +1,17 @@
 import React, { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
+import MovieDetail from "./MovieDetail";
 
-const MovieCard = ({ title, year, id, up, down, poster, onOpenDetail }) => {
+const MovieCard = ({ title, year, id, up, down, poster }) => {
   const { handleUpCount, handleDownCount } = useContext(AppContext);
 
   return (
     <MovieCardContainer>
       <li>
         <MovieDisplay>
-          <MovieCardButton onClick={() => onOpenDetail(id)}>
-            <Poster>
-              <img src={poster} alt="film-poster" />
-            </Poster>
-            <p>
-              {title} ({year})
-            </p>
-          </MovieCardButton>
+          <MovieDetail title={title} year={year} id={id} poster={poster} />
         </MovieDisplay>
-
         <VotingContainer>
           <UpVote onClick={() => handleUpCount(id)}>
             <VoteCount>{up ? up : 0}</VoteCount>
@@ -58,17 +51,6 @@ const MovieCardContainer = styled.div`
 `;
 
 const MovieDisplay = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const MovieCardButton = styled.button`
-  background: #1a1b41;
-  color: #f1ff37;
-`;
-
-const Poster = styled.div`
-  // border: 1px solid lime;
   display: flex;
   justify-content: center;
 `;
