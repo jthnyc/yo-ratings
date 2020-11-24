@@ -13,6 +13,7 @@ const AppContextProvider = (props) => {
   const [selectedSearchUrl, setSelectedSearchUrl] = useState(API_URL);
   const [selected, setSelected] = useState([]);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [disabled, setDisabled] = useState({});
   const [votedArr, setVotedArr] = useState(() => {
     const localData = localStorage.getItem("votedList");
     return localData ? JSON.parse(localData) : [];
@@ -79,27 +80,41 @@ const AppContextProvider = (props) => {
 
   const handleUpCount = (id) => {
     const clickedMovie = listSearchResult.find((movie) => movie.imdbID === id);
+    // check if movie already has down vote, disable up vote
+
     let inVotedArr = votedArr.find((movie) => movie.imdbID === id);
     inVotedArr
       ? (votedArr.up += 1)
       : setVotedArr([...votedArr, { ...clickedMovie, up: 1 }]);
 
     const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-
-    if (selectedMovie) {
-      selectedMovie.up ? (selectedMovie.up += 1) : (selectedMovie.up = 1);
-      const newResult = [];
-      listSearchResult.forEach((movie) =>
-        movie.imdbID === selectedMovie
-          ? newResult.push(selectedMovie)
-          : newResult.push(movie)
-      );
-      setListSearchResult([...newResult]);
+    console.log("UP selected === ", selectedMovie);
+    let obj = {};
+    if (selectedMovie.up) {
+    } else {
+      if (selectedMovie) {
+        // eslint-disable-next-line no-unused-expressions
+        selectedMovie.up
+          ? ((selectedMovie.up += 1),
+            (obj[id] = { up: true, down: false }),
+            setDisabled({ ...disabled, obj }))
+          : ((selectedMovie.up = 1),
+            (obj[id] = { up: false, down: true }),
+            setDisabled({ ...disabled, obj }));
+        const newResult = [];
+        listSearchResult.forEach((movie) =>
+          movie.imdbID === selectedMovie
+            ? newResult.push(selectedMovie)
+            : newResult.push(movie)
+        );
+        setListSearchResult([...newResult]);
+      }
     }
   };
 
   const handleDownCount = (id) => {
     const clickedMovie = listSearchResult.find((movie) => movie.imdbID === id);
+    // check if clicked movie already has one vote on up, then disable down
     const inVotedArr = votedArr.find((movie) => movie.imdbID === id);
     inVotedArr
       ? votedArr.down
@@ -108,6 +123,7 @@ const AppContextProvider = (props) => {
       : setVotedArr([...votedArr, { ...clickedMovie, down: 1 }]);
 
     const selected = listSearchResult.find((movie) => movie.imdbID === id);
+    console.log("DOWN selected ===  ", selected);
     if (selected) {
       selected.down ? (selected.down += 1) : (selected.down = 1);
       const newResult = [];
@@ -137,6 +153,7 @@ const AppContextProvider = (props) => {
         votedArr,
         isFlipped,
         setIsFlipped,
+        disabled,
         handleFlip: handleFlip,
         handleUpCount: handleUpCount,
         handleDownCount: handleDownCount,

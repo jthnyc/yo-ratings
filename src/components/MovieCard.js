@@ -5,12 +5,15 @@ import DetailFront from "./DetailFront";
 import DetailBack from "./DetailBack";
 
 const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
-  const { selected, handleFlip, handleUpCount, handleDownCount } = useContext(
-    AppContext
-  );
-  // console.log("Is there flipped: ", flipped);
-  // it appears that flipped data is competing with API call to grab selected data
-  console.log("selected in card: ", selected);
+  const {
+    selected,
+    handleFlip,
+    handleUpCount,
+    handleDownCount,
+    disabled,
+  } = useContext(AppContext);
+  const upBtnStatus = disabled;
+  console.log("UP BUTTON STATUS: ", upBtnStatus);
 
   return (
     <MovieCardContainer>
