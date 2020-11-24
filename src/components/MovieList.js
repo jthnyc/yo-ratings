@@ -5,8 +5,7 @@ import styled from "styled-components";
 
 const MovieList = () => {
   const { title, listSearchResult } = useContext(AppContext);
-  // console.log("list: ", listSearchResult);
-
+  console.log("list: ", listSearchResult);
   return (
     <MovieContainer>
       {title ? (
@@ -31,46 +30,11 @@ const MovieList = () => {
                 );
               })}
             </MovieListWrapper>
-
-            {/* {newMovieList.length !== 0 ? (
-              <MovieListWrapper>
-                {newMovieList.map((movie) => {
-                  return (
-                    <MovieCard
-                      key={movie.imdbID}
-                      title={movie.Title}
-                      year={movie.Year}
-                      poster={movie.Poster}
-                      id={movie.imdbID}
-                      up={movie.up}
-                      down={movie.down}
-                      flipped={movie.flipped}
-                    />
-                  );
-                })}
-              </MovieListWrapper>
-            ) : (
-              <MovieListWrapper>
-                {listSearchResult.map((movie) => {
-                  return (
-                    <MovieCard
-                      key={movie.imdbID}
-                      title={movie.Title}
-                      year={movie.Year}
-                      poster={movie.Poster}
-                      id={movie.imdbID}
-                      up={movie.up}
-                      down={movie.down}
-                    />
-                  );
-                })}
-              </MovieListWrapper>
-            )} */}
           </div>
         </MovieListContainer>
       ) : (
         <MovieListContainer>
-          <SearchQuery>No result</SearchQuery>
+          <SearchQuery>Search for some movies!</SearchQuery>
         </MovieListContainer>
       )}
     </MovieContainer>
@@ -87,6 +51,7 @@ const MovieContainer = styled.div`
   background-color: #6290c3;
   border-radius: 0.5em;
   box-shadow: 0 0 10px #6290c3;
+  min-height: 100vh;
 `;
 
 const MovieListContainer = styled.div`
@@ -101,6 +66,6 @@ const SearchQuery = styled.h5`
 const MovieListWrapper = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-  grid-auto-rows: minmax(20rem, auto);
+  grid-auto-rows: minmax(20rem, 1fr);
   padding: 0;
 `;

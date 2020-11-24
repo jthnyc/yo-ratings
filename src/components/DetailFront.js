@@ -7,9 +7,9 @@ const DetailFront = ({ title, year, poster }) => {
       <Poster>
         <img src={poster} alt="film-poster" />
       </Poster>
-      <p>
+      <SmallTitle>
         {title} ({year})
-      </p>
+      </SmallTitle>
     </div>
   );
 };
@@ -20,4 +20,11 @@ const Poster = styled.div`
   // border: 1px solid lime;
   display: flex;
   justify-content: center;
+`;
+
+const SmallTitle = styled.p`
+  // display: flex;
+  // border: 1px solid yellow;
+  // width: 80%;
+  // align: center;
 `;

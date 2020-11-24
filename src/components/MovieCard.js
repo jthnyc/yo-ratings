@@ -10,10 +10,10 @@ const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
     handleFlip,
     handleUpCount,
     handleDownCount,
-    disabled,
+    // disabled,
   } = useContext(AppContext);
-  const upBtnStatus = disabled;
-  console.log("UP BUTTON STATUS: ", upBtnStatus);
+  // const upBtnStatus = disabled;
+  // console.log("UP BUTTON STATUS: ", upBtnStatus);
 
   return (
     <MovieCardContainer>
@@ -25,7 +25,16 @@ const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
               // {selected.imdbID === id ? (
               <DetailBack id={id} />
             ) : (
-              <DetailFront id={id} poster={poster} title={title} year={year} />
+              <DetailFront
+                id={id}
+                poster={
+                  poster === "N/A"
+                    ? "https://dummyimage.com/310x450/1a1b41/1a1b41"
+                    : poster
+                }
+                title={title}
+                year={year}
+              />
             )}
           </MovieCardButton>
         </MovieDisplay>
@@ -55,7 +64,6 @@ const MovieCardContainer = styled.div`
 const MovieDisplay = styled.div`
   display: flex;
   justify-content: center;
-
   // &:hover {
   //   background-color: black;
   //   -webkit-transform: rotateY(180deg);
@@ -67,16 +75,18 @@ const MovieCardButton = styled.button`
   background: #1a1b41;
   color: #f1ff37;
   cursor: pointer;
+  border: none;
   outline: none;
   &:hover {
-    background-color: yellow;
+    background-color: #f1ffe7;
+    color: #1a1b41;
   }
   &:active {
+    -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
     transition: transform 1s;
     backface-visibility: hidden;
   }
-  // -webkit-transform: rotateY(180deg);
 `;
 
 const VotingContainer = styled.div`
