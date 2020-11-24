@@ -10,15 +10,17 @@ const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
   );
   // console.log("Is there flipped: ", flipped);
   // it appears that flipped data is competing with API call to grab selected data
+  console.log("selected in card: ", selected);
 
   return (
     <MovieCardContainer>
       <li>
         <MovieDisplay>
           <MovieCardButton onClick={() => handleFlip(id)}>
-            {selected && flipped === true ? (
+            {selected.find((movie) => movie.imdbID === id) &&
+            flipped === true ? (
               // {selected.imdbID === id ? (
-              <DetailBack />
+              <DetailBack id={id} />
             ) : (
               <DetailFront id={id} poster={poster} title={title} year={year} />
             )}

@@ -11,43 +11,41 @@ const AppContextProvider = (props) => {
   const [title, setTitle] = useState("");
   const [listSearchUrl, setListSearchUrl] = useState(API_URL);
   const [selectedSearchUrl, setSelectedSearchUrl] = useState(API_URL);
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState([]);
   const [isFlipped, setIsFlipped] = useState(false);
   const [votedArr, setVotedArr] = useState(() => {
     const localData = localStorage.getItem("votedList");
     return localData ? JSON.parse(localData) : [];
   });
 
-  // console.log("What is in flip arr at TOP: ", flipArr);
-  // console.log("in voted array up top: ", votedArr);
-
   useEffect(() => {
     localStorage.setItem("votedList", JSON.stringify(votedArr));
   }, [votedArr]);
 
+  // fetching first time using s parameter for movie list search
   useEffect(() => {
-    // fetching first time using s parameter for search
     const fetchList = async () => {
       const response = await Axios(listSearchUrl);
-      // console.log("LIST SEARCH URL ==== ", listSearchUrl);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
       setListSearchResult(uniqueMovies);
     };
     fetchList();
+  }, [listSearchUrl]);
 
-    // fetching second time using i parameter for imdb id
-    // may need to consider a new conditional criteria...
+  // fetching second time using i parameter for movie imdbID search
+  useEffect(() => {
     if (selectedSearchUrl.includes("i=")) {
       const fetchData = async () => {
         const response = await Axios(selectedSearchUrl);
         const selectedMovie = response.data || {};
-        console.log("is this called to set selected? =====", selectedMovie);
-        setSelected(selectedMovie);
+        console.log("selected movie: ", selectedMovie);
+        setSelected([...selected, selectedMovie]);
       };
       fetchData();
     }
-  }, [isFlipped, listSearchUrl, selectedSearchUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSearchUrl]);
 
   // search result can sometimes return duplicates, sorting by year as well
   const filterUniqueMovies = (movieArr) => {
@@ -60,25 +58,7 @@ const AppContextProvider = (props) => {
     return uniqueMovies;
   };
 
-  /*
-  To handle flip, want to do similar as up and down vote -- 
-  simply adding on a new property.
-  Try using the same method by creating new keyvalue pair first
-  */
-
   const handleFlip = (id) => {
-    // first add it to an array with attribute
-    // if it exists in array, flip it
-    // const movieToFlip = listSearchResult.find((movie) => movie.imdbID === id);
-    // const inFlipArr = flippedArr.find((movie) => movie.imdbID === id);
-    // // console.log("IS IT IN FLIP ARR: ", inFlipArr);
-    // if (inFlipArr) {
-    //   // console.log("It's in flip array as object: ", inFlipArr);
-    //   inFlipArr.flipped = !inFlipArr.flipped;
-    // } else {
-    //   setSelectedSearchUrl(API_URL + `&i=${id}`);
-    //   setFlippedArr([...flippedArr, { ...movieToFlip, flipped: true }]);
-    // }
     setSelectedSearchUrl(API_URL + `&i=${id}`);
     const flippedMovieToAdd = listSearchResult.find(
       (movie) => movie.imdbID === id
@@ -93,9 +73,7 @@ const AppContextProvider = (props) => {
           ? updatedList.push(flippedMovieToAdd)
           : updatedList.push(movie)
       );
-      // console.log("updated list: ", updatedList);
       setListSearchResult([...updatedList]);
-      // console.log("updated list result: ", listSearchResult);
     }
   };
 
@@ -107,7 +85,7 @@ const AppContextProvider = (props) => {
       : setVotedArr([...votedArr, { ...clickedMovie, up: 1 }]);
 
     const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-    // console.log("selected in handleUpCount: ", selectedMovie);
+
     if (selectedMovie) {
       selectedMovie.up ? (selectedMovie.up += 1) : (selectedMovie.up = 1);
       const newResult = [];
@@ -117,7 +95,6 @@ const AppContextProvider = (props) => {
           : newResult.push(movie)
       );
       setListSearchResult([...newResult]);
-      // console.log("after up count: ", listSearchResult);
     }
   };
 
@@ -131,7 +108,6 @@ const AppContextProvider = (props) => {
       : setVotedArr([...votedArr, { ...clickedMovie, down: 1 }]);
 
     const selected = listSearchResult.find((movie) => movie.imdbID === id);
-    // console.log("selected in handleDownCount: ", selected);
     if (selected) {
       selected.down ? (selected.down += 1) : (selected.down = 1);
       const newResult = [];
@@ -141,7 +117,6 @@ const AppContextProvider = (props) => {
           : newResult.push(movie)
       );
       setListSearchResult([...newResult]);
-      // console.log("after down count: ", listSearchResult);
     }
   };
 

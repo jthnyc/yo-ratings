@@ -1,14 +1,16 @@
 import React, { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 
-const DetailBack = () => {
+const DetailBack = ({ id }) => {
   const { selected } = useContext(AppContext);
-  console.log("SELECTED === ", selected);
+  const selectedMovie = selected.find((movie) => movie.imdbID === id);
+  const { Title, Director, Plot } = selectedMovie;
+
   return (
     <div>
-      <h3>{selected.Title}</h3>
-      <h3>Director: {selected.Director}</h3>
-      <p>{selected.Plot}</p>
+      <h3>{Title}</h3>
+      <h3>Director: {Director}</h3>
+      <p>{Plot}</p>
     </div>
   );
 };

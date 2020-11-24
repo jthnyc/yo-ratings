@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 const MovieList = () => {
   const { title, listSearchResult } = useContext(AppContext);
-  console.log("list: ", listSearchResult);
+  // console.log("list: ", listSearchResult);
 
   return (
     <MovieContainer>
