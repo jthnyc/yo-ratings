@@ -3,26 +3,22 @@ import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
 import DetailFront from "./DetailFront";
 import DetailBack from "./DetailBack";
-// import ReactCardFlip from "react-card-flip";
 
-const MovieCard = ({ title, year, id, up, down, poster }) => {
-  const { selected, handleFlip, handleUpCount, handleDownCount } = useContext(
-    AppContext
-  );
+const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
+  const { handleFlip, handleUpCount, handleDownCount } = useContext(AppContext);
 
   return (
     <MovieCardContainer>
       <li>
         <MovieDisplay>
           <MovieCardButton onClick={() => handleFlip(id)}>
-            {/* <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal"> */}
-            {selected.imdbID === id ? (
+            {/* {might not be selected but whether the item in question has flipped as true } */}
+            {flipped === true ? (
+              /* {selected.imdbID === id ? ( */
               <DetailBack />
             ) : (
               <DetailFront id={id} poster={poster} title={title} year={year} />
             )}
-
-            {/* // </ReactCardFlip> */}
           </MovieCardButton>
         </MovieDisplay>
 
@@ -51,8 +47,7 @@ const MovieCardContainer = styled.div`
 const MovieDisplay = styled.div`
   display: flex;
   justify-content: center;
-  transition: transform 1s;
-  backface-visibility: hidden;
+
   // &:hover {
   //   background-color: black;
   //   -webkit-transform: rotateY(180deg);
@@ -64,8 +59,16 @@ const MovieCardButton = styled.button`
   background: #1a1b41;
   color: #f1ff37;
   cursor: pointer;
+  outline: none;
+  &:hover {
+    background-color: yellow;
+  }
+  &:active {
+    transform: rotateY(180deg);
+    transition: transform 1s;
+    backface-visibility: hidden;
+  }
   // -webkit-transform: rotateY(180deg);
-  // transform: rotateY(180deg);
 `;
 
 const VotingContainer = styled.div`

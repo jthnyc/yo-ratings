@@ -13,10 +13,15 @@ const AppContextProvider = (props) => {
   const [selectedSearchUrl, setSelectedSearchUrl] = useState(API_URL);
   const [selected, setSelected] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
+  const [flippedArr, setFlippedArr] = useState([]);
+  const [newMovieList, setNewMovieList] = useState([]);
   const [votedArr, setVotedArr] = useState(() => {
     const localData = localStorage.getItem("votedList");
     return localData ? JSON.parse(localData) : [];
   });
+
+  // console.log("AFTER FLIPPING: ", newMovieList);
+  // if there is stuff in newMovieList, render that list, otherwise render original search result
 
   useEffect(() => {
     localStorage.setItem("votedList", JSON.stringify(votedArr));
@@ -26,7 +31,6 @@ const AppContextProvider = (props) => {
     // fetching first time using s parameter for search
     const fetchList = async () => {
       const response = await Axios(listSearchUrl);
-      // console.log("LIST search URL = ", listSearchUrl);
       const movies = response.data["Search"] || [];
       const uniqueMovies = filterUniqueMovies(movies);
       setListSearchResult(uniqueMovies);
@@ -34,11 +38,9 @@ const AppContextProvider = (props) => {
     fetchList();
 
     // fetching second time using i parameter for imdb id
-    console.log("isFlipped is now: ", isFlipped);
-    if (isFlipped !== false) {
+    if (isFlipped === true) {
       const fetchData = async () => {
         const response = await Axios(selectedSearchUrl);
-        // console.log("SELECTED search URL ===== ", selectedSearchUrl);
         const selectedMovie = response.data || {};
         setSelected(selectedMovie);
       };
@@ -58,13 +60,22 @@ const AppContextProvider = (props) => {
   };
 
   // using the movie selected to create a new search URL
+  // flip the boolean value of movie matching id
   const handleFlip = (id) => {
-    setSelectedSearchUrl(API_URL + `&i=${id}`);
-    // setIsFlipped(
-    //   isFlipped === false ? !isFlipped : (!isFlipped, setSelected({}))
-    // );
     setIsFlipped(!isFlipped);
-    // setIsFlipped(selected);
+    setSelectedSearchUrl(API_URL + `&i=${id}`);
+    let flippedMovie = listSearchResult.find((movie) => movie.imdbID === id);
+    setFlippedArr([...flippedArr, flippedMovie]);
+    flippedMovie.flipped = !isFlipped;
+    console.log("Current movie to be flipped === ", flippedMovie.flipped);
+    const newList = [];
+    listSearchResult.forEach((movie) => {
+      movie.imdbID === flippedMovie.imdbID
+        ? newList.push(flippedMovie)
+        : newList.push(movie);
+    });
+    // console.log("NEW LIST: ", newList);
+    setNewMovieList([...newList]);
   };
 
   const handleUpCount = (id) => {
@@ -84,6 +95,7 @@ const AppContextProvider = (props) => {
           : newResult.push(movie)
       );
       setListSearchResult([...newResult]);
+      console.log("after up count: ", listSearchResult);
     }
   };
 
@@ -127,9 +139,12 @@ const AppContextProvider = (props) => {
         API_URL,
         selected,
         setSelected,
+        selectedSearchUrl,
+        setSelectedSearchUrl,
         votedArr,
         isFlipped,
         setIsFlipped,
+        newMovieList,
         handleFlip: handleFlip,
         handleUpCount: handleUpCount,
         handleDownCount: handleDownCount,

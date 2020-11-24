@@ -4,8 +4,8 @@ import MovieCard from "../components/MovieCard";
 import styled from "styled-components";
 
 const MovieList = () => {
-  const { title, listSearchResult } = useContext(AppContext);
-
+  const { title, listSearchResult, newMovieList } = useContext(AppContext);
+  // console.log("LIST SEARCH RESULT in MOVIE LIST: ", listSearchResult);
   return (
     <MovieContainer>
       {title ? (
@@ -14,21 +14,40 @@ const MovieList = () => {
             Results for <em>"{title}"</em>
           </SearchQuery>
           <div>
-            <MovieListWrapper>
-              {listSearchResult.map((movie) => {
-                return (
-                  <MovieCard
-                    key={movie.imdbID}
-                    title={movie.Title}
-                    year={movie.Year}
-                    poster={movie.Poster}
-                    id={movie.imdbID}
-                    up={movie.up}
-                    down={movie.down}
-                  />
-                );
-              })}
-            </MovieListWrapper>
+            {newMovieList.length !== 0 ? (
+              <MovieListWrapper>
+                {newMovieList.map((movie) => {
+                  return (
+                    <MovieCard
+                      key={movie.imdbID}
+                      title={movie.Title}
+                      year={movie.Year}
+                      poster={movie.Poster}
+                      id={movie.imdbID}
+                      up={movie.up}
+                      down={movie.down}
+                      flipped={movie.flipped}
+                    />
+                  );
+                })}
+              </MovieListWrapper>
+            ) : (
+              <MovieListWrapper>
+                {listSearchResult.map((movie) => {
+                  return (
+                    <MovieCard
+                      key={movie.imdbID}
+                      title={movie.Title}
+                      year={movie.Year}
+                      poster={movie.Poster}
+                      id={movie.imdbID}
+                      up={movie.up}
+                      down={movie.down}
+                    />
+                  );
+                })}
+              </MovieListWrapper>
+            )}
           </div>
         </MovieListContainer>
       ) : (
