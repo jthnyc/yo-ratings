@@ -4,8 +4,9 @@ import MovieCard from "../components/MovieCard";
 import styled from "styled-components";
 
 const MovieList = () => {
-  const { title, listSearchResult, newMovieList } = useContext(AppContext);
-  // console.log("LIST SEARCH RESULT in MOVIE LIST: ", listSearchResult);
+  const { title, listSearchResult } = useContext(AppContext);
+  console.log("list: ", listSearchResult);
+
   return (
     <MovieContainer>
       {title ? (
@@ -14,7 +15,24 @@ const MovieList = () => {
             Results for <em>"{title}"</em>
           </SearchQuery>
           <div>
-            {newMovieList.length !== 0 ? (
+            <MovieListWrapper>
+              {listSearchResult.map((movie) => {
+                return (
+                  <MovieCard
+                    key={movie.imdbID}
+                    title={movie.Title}
+                    year={movie.Year}
+                    poster={movie.Poster}
+                    id={movie.imdbID}
+                    up={movie.up}
+                    down={movie.down}
+                    flipped={movie.flipped}
+                  />
+                );
+              })}
+            </MovieListWrapper>
+
+            {/* {newMovieList.length !== 0 ? (
               <MovieListWrapper>
                 {newMovieList.map((movie) => {
                   return (
@@ -47,7 +65,7 @@ const MovieList = () => {
                   );
                 })}
               </MovieListWrapper>
-            )}
+            )} */}
           </div>
         </MovieListContainer>
       ) : (

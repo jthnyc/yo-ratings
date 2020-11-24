@@ -3,6 +3,7 @@ import { AppContext } from "../contexts/AppContext";
 
 const DetailBack = () => {
   const { selected } = useContext(AppContext);
+  console.log("SELECTED === ", selected);
   return (
     <div>
       <h3>{selected.Title}</h3>
