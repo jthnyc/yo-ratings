@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 import styled from "styled-components";
+import { useDebounce } from "use-debounce";
 
 const SearchBar = () => {
   const { title, setTitle, setListSearchUrl, API_URL } = useContext(AppContext);
-
+  const [debouncedTitle] = useDebounce(title, 200);
   return (
     <Wrapper>
       <SearchForm
         onSubmit={(e) => {
-          setListSearchUrl(API_URL + `&s=${title}&type=movie`);
+          setListSearchUrl(API_URL + `&s=${debouncedTitle}&type=movie`);
           e.preventDefault();
         }}
       >
@@ -24,7 +25,9 @@ const SearchBar = () => {
                 value={title}
                 placeholder="Search Movies"
                 onFocus={(e) => (e.target.placeholder = "")}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
               />
             </SearchInputFieldContainer>
           </SearchInputContainer>

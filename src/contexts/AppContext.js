@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import Axios from "axios";
+import useStickyState from "@nicer-toolbox/use-sticky-state";
 
 export const AppContext = createContext();
 
@@ -7,24 +8,57 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 const API_URL = `https://omdbapi.com/?apikey=${API_KEY}`;
 
 const AppContextProvider = (props) => {
-  const [listSearchResult, setListSearchResult] = useState([]);
-  const [title, setTitle] = useState("");
+  // const [listSearchResult, setListSearchResult] = useState(() => {
+  //   const savedMovies = localStorage.getItem("movieList");
+  //   return savedMovies ? JSON.parse(savedMovies) : [];
+  // });
+  const [listSearchResult, setListSearchResult] = useStickyState(
+    [],
+    "movieList"
+  );
+  const [title, setTitle] = useStickyState("", "query");
   const [listSearchUrl, setListSearchUrl] = useState(API_URL);
   const [selectedSearchUrl, setSelectedSearchUrl] = useState(API_URL);
   const [selected, setSelected] = useState([]);
-  const [isFlipped, setIsFlipped] = useState(false);
   const [disabled, setDisabled] = useState({});
-  const [votedArr, setVotedArr] = useState(() => {
-    const localData = localStorage.getItem("votedList");
-    return localData ? JSON.parse(localData) : [];
-  });
+  const [votedArr, setVotedArr] = useStickyState([], "votedList");
 
-  useEffect(() => {
-    localStorage.setItem("votedList", JSON.stringify(votedArr));
-  }, [votedArr]);
+  /*
+  const savedSearch = localStorage.getItem("query");
+  const query = savedSearch.slice(1, savedSearch.length - 1);
+  console.log("Query is: ", query, title);
+
+  const savedMovies = localStorage.getItem("movieList");
+  console.log("saved movies: ", savedMovies);
+  const parsedMovies = JSON.parse(savedMovies);
+  console.log("parsed movies: ", parsedMovies);
+  let newParsedMovies = [];
+  newParsedMovies =
+    parsedMovies !== null
+      ? parsedMovies.forEach((movieObj) => newParsedMovies.push(movieObj))
+      : [];
+  console.log("List to push to effect ", newParsedMovies);
+  */
 
   // fetching first time using s parameter for movie list search
   useEffect(() => {
+    // IF THE SEARCH TERM IS THE SAME as what was stored before
+    // if the query data already exists, access localStorage instead of API call
+    // what's the check? so far thinking that the query is existing in query history
+    // if there is, then set listSearchResult with the saved localStorage
+    // if (savedMovies.length !== 0) {
+    //   console.log("IN IF");
+
+    // console.log("PARSED MOVIES: IN EFFECT: ", parsedMovies);
+    // if (title === query) {
+    //   console.log("IN IF");
+    // if (
+    //   newParsedMovies !== undefined &&
+    //   listSearchUrl.includes(query.slice(1, query.length - 1))
+    // ){
+    //   console.log("in if");
+    // setListSearchResult(newParsedMovies);
+    // } else {
     const fetchList = async () => {
       const response = await Axios(listSearchUrl);
       const movies = response.data["Search"] || [];
@@ -32,6 +66,7 @@ const AppContextProvider = (props) => {
       setListSearchResult(uniqueMovies);
     };
     fetchList();
+    // }
   }, [listSearchUrl]);
 
   // fetching second time using i parameter for movie imdbID search
@@ -40,7 +75,7 @@ const AppContextProvider = (props) => {
       const fetchData = async () => {
         const response = await Axios(selectedSearchUrl);
         const selectedMovie = response.data || {};
-        console.log("selected movie: ", selectedMovie);
+        // console.log("selected movie: ", selectedMovie);
         setSelected([...selected, selectedMovie]);
       };
       fetchData();
@@ -58,6 +93,18 @@ const AppContextProvider = (props) => {
     uniqueMovies.sort((a, b) => a.Year - b.Year);
     return uniqueMovies;
   };
+
+  // const checkVotedArr = (voteArr, movieList) => {
+  //   let toCheckObj = votedArr.length !== 0 ? voteArr[0] : {};
+  //   // check if votedarr is not empty, and if listSearchResult contains that object
+  //   for (let movie of movieList) {
+  //     if (movie === toCheckObj) {
+  //       console.log("match === ", movie);
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // };
 
   const handleFlip = (id) => {
     setSelectedSearchUrl(API_URL + `&i=${id}`);
@@ -88,7 +135,7 @@ const AppContextProvider = (props) => {
       : setVotedArr([...votedArr, { ...clickedMovie, up: 1 }]);
 
     const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-    console.log("UP selected === ", selectedMovie);
+    // console.log("UP selected === ", selectedMovie);
     let obj = {};
     if (selectedMovie.up) {
     } else {
@@ -123,7 +170,7 @@ const AppContextProvider = (props) => {
       : setVotedArr([...votedArr, { ...clickedMovie, down: 1 }]);
 
     const selected = listSearchResult.find((movie) => movie.imdbID === id);
-    console.log("DOWN selected ===  ", selected);
+    // console.log("DOWN selected ===  ", selected);
     if (selected) {
       selected.down ? (selected.down += 1) : (selected.down = 1);
       const newResult = [];
@@ -140,19 +187,11 @@ const AppContextProvider = (props) => {
     <AppContext.Provider
       value={{
         listSearchResult,
-        setListSearchResult,
         title,
         setTitle,
-        listSearchUrl,
         setListSearchUrl,
         API_URL,
         selected,
-        setSelected,
-        selectedSearchUrl,
-        setSelectedSearchUrl,
-        votedArr,
-        isFlipped,
-        setIsFlipped,
         disabled,
         handleFlip: handleFlip,
         handleUpCount: handleUpCount,
