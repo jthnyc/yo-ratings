@@ -25,7 +25,7 @@ const BackContainer = styled.div`
   background-color: var(--light-green);
   color: #1a1b41;
   min-height: 490px;
-  // min-width: 80%;
+  // max-width: 98%;
 `;
 
 const FilmTitle = styled.h3`

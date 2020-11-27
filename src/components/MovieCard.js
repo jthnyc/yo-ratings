@@ -96,7 +96,8 @@ const MovieCardButton = styled.button`
 const VotingContainer = styled.div`
   // border: 1px dotted white;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  // justify-content: space-around;
   height: 50px;
   margin-top: 1em;
 `;
@@ -111,6 +112,7 @@ const UpVote = styled.button`
   color: #baff29;
   border-radius: 1rem;
   width: 80px;
+  outline: none;
 `;
 
 const DownVote = styled.button`
@@ -123,6 +125,7 @@ const DownVote = styled.button`
   border-radius: 1rem;
   background-color: #1a1b41;
   color: #baff29;
+  outline: none;
 `;
 
 const VoteCount = styled.h5`
