@@ -8,66 +8,38 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 const API_URL = `https://omdbapi.com/?apikey=${API_KEY}`;
 
 const AppContextProvider = (props) => {
-  // const [listSearchResult, setListSearchResult] = useState(() => {
-  //   const savedMovies = localStorage.getItem("movieList");
-  //   return savedMovies ? JSON.parse(savedMovies) : [];
-  // });
-  const [listSearchResult, setListSearchResult] = useStickyState(
-    [],
-    "movieList"
-  );
+  const [listSearchResult, setListSearchResult] = useState([]);
   const [title, setTitle] = useStickyState("", "query");
   const [listSearchUrl, setListSearchUrl] = useState(API_URL);
   const [selectedSearchUrl, setSelectedSearchUrl] = useState(API_URL);
   const [selected, setSelected] = useState([]);
   const [disabled, setDisabled] = useState({});
   const [votedArr, setVotedArr] = useStickyState([], "votedList");
-
-  /*
-  const savedSearch = localStorage.getItem("query");
-  const query = savedSearch.slice(1, savedSearch.length - 1);
-  console.log("Query is: ", query, title);
-
-  const savedMovies = localStorage.getItem("movieList");
-  console.log("saved movies: ", savedMovies);
-  const parsedMovies = JSON.parse(savedMovies);
-  console.log("parsed movies: ", parsedMovies);
-  let newParsedMovies = [];
-  newParsedMovies =
-    parsedMovies !== null
-      ? parsedMovies.forEach((movieObj) => newParsedMovies.push(movieObj))
-      : [];
-  console.log("List to push to effect ", newParsedMovies);
-  */
+  const [searchTermArr, setSearchTermArr] = useStickyState([], "searchTerms");
 
   // fetching first time using s parameter for movie list search
   useEffect(() => {
-    // IF THE SEARCH TERM IS THE SAME as what was stored before
-    // if the query data already exists, access localStorage instead of API call
-    // what's the check? so far thinking that the query is existing in query history
-    // if there is, then set listSearchResult with the saved localStorage
-    // if (savedMovies.length !== 0) {
-    //   console.log("IN IF");
-
-    // console.log("PARSED MOVIES: IN EFFECT: ", parsedMovies);
-    // if (title === query) {
-    //   console.log("IN IF");
-    // if (
-    //   newParsedMovies !== undefined &&
-    //   listSearchUrl.includes(query.slice(1, query.length - 1))
-    // ){
-    //   console.log("in if");
-    // setListSearchResult(newParsedMovies);
-    // } else {
-    const fetchList = async () => {
-      const response = await Axios(listSearchUrl);
-      const movies = response.data["Search"] || [];
-      const uniqueMovies = filterUniqueMovies(movies);
-      setListSearchResult(uniqueMovies);
-    };
-    fetchList();
-    // }
+    const savedMovieList = JSON.parse(localStorage.getItem("MovieList"));
+    console.log("saved movies: ", savedMovieList);
+    const matched = isInSearchTermArr(title, searchTermArr);
+    if (matched) {
+      setListSearchResult(savedMovieList);
+    } else {
+      const fetchList = async () => {
+        const response = await Axios(listSearchUrl);
+        const movies = response.data["Search"] || [];
+        const uniqueMovies = filterUniqueMovies(movies);
+        setListSearchResult(uniqueMovies);
+        setSearchTermArr([...searchTermArr, title]);
+      };
+      fetchList();
+    }
   }, [listSearchUrl]);
+
+  // fetching only when list search result has updated?
+  useEffect(() => {
+    localStorage.setItem("MovieList", JSON.stringify(listSearchResult));
+  }, [listSearchResult]);
 
   // fetching second time using i parameter for movie imdbID search
   useEffect(() => {
@@ -75,7 +47,6 @@ const AppContextProvider = (props) => {
       const fetchData = async () => {
         const response = await Axios(selectedSearchUrl);
         const selectedMovie = response.data || {};
-        // console.log("selected movie: ", selectedMovie);
         setSelected([...selected, selectedMovie]);
       };
       fetchData();
@@ -92,6 +63,16 @@ const AppContextProvider = (props) => {
     );
     uniqueMovies.sort((a, b) => a.Year - b.Year);
     return uniqueMovies;
+  };
+
+  const isInSearchTermArr = (term, arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === term) {
+        console.log("term searched before!");
+        return true;
+      }
+    }
+    return false;
   };
 
   // const checkVotedArr = (voteArr, movieList) => {
@@ -126,14 +107,6 @@ const AppContextProvider = (props) => {
   };
 
   const handleUpCount = (id) => {
-    const clickedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-    // check if movie already has down vote, disable up vote
-
-    let inVotedArr = votedArr.find((movie) => movie.imdbID === id);
-    inVotedArr
-      ? (votedArr.up += 1)
-      : setVotedArr([...votedArr, { ...clickedMovie, up: 1 }]);
-
     const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
     // console.log("UP selected === ", selectedMovie);
     let obj = {};
@@ -155,20 +128,12 @@ const AppContextProvider = (props) => {
             : newResult.push(movie)
         );
         setListSearchResult([...newResult]);
+        setVotedArr([...newResult]);
       }
     }
   };
 
   const handleDownCount = (id) => {
-    const clickedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-    // check if clicked movie already has one vote on up, then disable down
-    const inVotedArr = votedArr.find((movie) => movie.imdbID === id);
-    inVotedArr
-      ? votedArr.down
-        ? (inVotedArr.down += 1)
-        : (inVotedArr.down = 1)
-      : setVotedArr([...votedArr, { ...clickedMovie, down: 1 }]);
-
     const selected = listSearchResult.find((movie) => movie.imdbID === id);
     // console.log("DOWN selected ===  ", selected);
     if (selected) {
@@ -180,7 +145,38 @@ const AppContextProvider = (props) => {
           : newResult.push(movie)
       );
       setListSearchResult([...newResult]);
+      // if there are currently stuff and the id does not match any existing, add to it
+      // otherwise just copy newResult
+      let hasExistingResults = checkExistingResults(id, votedArr);
+      if (hasExistingResults) {
+        // if there are currently stuff, only add things that do not match ones that are in votedArr
+        let finalResult = [];
+        finalResult = createNewList(votedArr, listSearchResult);
+        setVotedArr([...finalResult]);
+      } else {
+        setVotedArr([...newResult]);
+      }
     }
+  };
+
+  const checkExistingResults = (id, votedList) => {
+    for (let i = 0; i < votedList; i++) {
+      let currID = votedList[i].imdbID;
+      if (currID === id) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const createNewList = (votedList, searchResult) => {
+    let arr = [];
+    for (let i = 0; i < votedList; i++) {
+      for (let j = 0; j < searchResult; j++) {
+        if (votedList[i] !== searchResult[j]) arr.push(searchResult[j]);
+      }
+    }
+    return arr;
   };
 
   return (
