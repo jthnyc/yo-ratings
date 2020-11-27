@@ -8,23 +8,31 @@ const DetailBack = ({ id }) => {
   const { Title, Director, Plot, Year } = selectedMovie;
 
   return (
-    <div>
+    <BackContainer>
       <FilmTitle>{Title}</FilmTitle>
       <FilmYear>{Year}</FilmYear>
       <FilmDirector>Director: {Director}</FilmDirector>
       <FilmPlot>{Plot === "N/A" ? "" : Plot}</FilmPlot>
-    </div>
+    </BackContainer>
   );
 };
 
 export default DetailBack;
+
+const BackContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: var(--light-green);
+  color: #1a1b41;
+  min-height: 490px;
+  // min-width: 80%;
+`;
 
 const FilmTitle = styled.h3`
   // border: 1px solid red;
   font-size: 25px;
   margin-top: 2em;
   padding: 0.5em;
-  // width: 80%;
 `;
 
 const FilmYear = styled.h3`

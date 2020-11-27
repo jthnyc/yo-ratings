@@ -1,20 +1,15 @@
-// import MovieDetail from "./components/MovieDetail";
+import AppContextProvider from "./contexts/AppContext";
 import MovieList from "./components/MovieList";
 import SearchBar from "./components/SearchBar";
-// import "./App.css";
-import AppContextProvider from "./contexts/AppContext";
+import Global from "./Global";
 
 function App() {
   return (
-    <div className="App">
-      <AppContextProvider>
-        <header className="App-header">
-          <SearchBar />
-          <MovieList />
-          {/* <MovieDetail /> */}
-        </header>
-      </AppContextProvider>
-    </div>
+    <AppContextProvider>
+      <Global />
+      <SearchBar />
+      <MovieList />
+    </AppContextProvider>
   );
 }
 

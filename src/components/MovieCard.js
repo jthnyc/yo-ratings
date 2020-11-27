@@ -56,33 +56,33 @@ export default MovieCard;
 
 const MovieCardContainer = styled.div`
   // border: 1px solid yellow;
+  display: flex;
+  justify-content: center;
+  align-content: space-between;
   margin: 0.3rem 0.3rem;
   list-style: none;
   // width: 20em;
 `;
 
 const MovieDisplay = styled.div`
+  // border: 1px solid blue;
   display: flex;
   justify-content: center;
-  // &:hover {
-  //   background-color: black;
-  //   -webkit-transform: rotateY(180deg);
-  //   transform: rotateY(180deg);
-  // }
 `;
 
 const MovieCardButton = styled.button`
   // border: 5px solid green;
   background: #1a1b41;
-  color: #f1ff37;
+  color: var(--lime-yellow);
   cursor: pointer;
   border: none;
   outline: none;
-  width: 90%;
+  width: 98%;
   min-height: 500px;
+  box-shadow: 0 0 10px var(--teal-green);
 
   &:hover {
-    background-color: #f1ffe7;
+    background-color: var(--light-green);
     color: #1a1b41;
   }
   &:active {
@@ -96,8 +96,9 @@ const MovieCardButton = styled.button`
 const VotingContainer = styled.div`
   // border: 1px dotted white;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   height: 50px;
+  margin-top: 1em;
 `;
 
 const UpVote = styled.button`

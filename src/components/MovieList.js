@@ -45,18 +45,20 @@ const MovieList = () => {
 export default MovieList;
 
 const MovieContainer = styled.div`
-  border: 1px solid black;
+  // border: 1px solid black;
   border-style: none;
   margin: 2em 2em;
   padding: 2em 2em;
-  background-color: #6290c3;
+  background-color: var(--dark-blue);
   border-radius: 0.5em;
-  box-shadow: 0 0 10px #6290c3;
+  box-shadow: 0 0 10px var(--light-blue);
   min-height: 100vh;
+  box-shadow: 0 0 10px var(--teal-green);
+  color: var(--light-green);
 `;
 
 const MovieListContainer = styled.div`
-  //   border: 1px solid red;
+  // border: 1px solid red;
 `;
 
 const SearchQuery = styled.h5`
