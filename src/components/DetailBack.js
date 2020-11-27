@@ -20,19 +20,26 @@ const DetailBack = ({ id }) => {
 export default DetailBack;
 
 const FilmTitle = styled.h3`
-  font-size: 28px;
+  // border: 1px solid red;
+  font-size: 25px;
   margin-top: 2em;
+  padding: 0.5em;
+  // width: 80%;
 `;
 
 const FilmYear = styled.h3`
+  // border: 1px solid red;
   font-size: 25px;
 `;
 
 const FilmDirector = styled.h3`
+  // border: 1px solid red;
   margin: 1em;
 `;
 
 const FilmPlot = styled.p`
+  // border: 1px solid red;
   margin: 2em;
+  padding: 0.2em;
   text-align: left;
 `;

@@ -72,11 +72,15 @@ const MovieDisplay = styled.div`
 `;
 
 const MovieCardButton = styled.button`
+  // border: 5px solid green;
   background: #1a1b41;
   color: #f1ff37;
   cursor: pointer;
   border: none;
   outline: none;
+  width: 90%;
+  min-height: 500px;
+
   &:hover {
     background-color: #f1ffe7;
     color: #1a1b41;
