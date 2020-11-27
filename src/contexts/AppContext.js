@@ -22,6 +22,7 @@ const AppContextProvider = (props) => {
     const savedMovieList = JSON.parse(localStorage.getItem("MovieList"));
     console.log("saved movies: ", savedMovieList);
     const matched = isInSearchTermArr(title, searchTermArr);
+    // ideally want to be able to see that term matched, and find the array of objects under matched term in votedList
     if (matched) {
       setListSearchResult(savedMovieList);
     } else {
@@ -75,18 +76,6 @@ const AppContextProvider = (props) => {
     return false;
   };
 
-  // const checkVotedArr = (voteArr, movieList) => {
-  //   let toCheckObj = votedArr.length !== 0 ? voteArr[0] : {};
-  //   // check if votedarr is not empty, and if listSearchResult contains that object
-  //   for (let movie of movieList) {
-  //     if (movie === toCheckObj) {
-  //       console.log("match === ", movie);
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
-
   const handleFlip = (id) => {
     setSelectedSearchUrl(API_URL + `&i=${id}`);
     const flippedMovieToAdd = listSearchResult.find(
@@ -128,7 +117,16 @@ const AppContextProvider = (props) => {
             : newResult.push(movie)
         );
         setListSearchResult([...newResult]);
-        setVotedArr([...newResult]);
+        // initial set up should be [{searchTerm: [array of objects]}, {searchTerm: [arr of obj]}]
+        console.log("search term: ", title);
+        const movieObj = {};
+        movieObj[title] = [...newResult];
+        console.log(movieObj);
+        if (votedArr.length === 0) {
+          setVotedArr([movieObj]);
+        } else {
+          setVotedArr([...votedArr, movieObj]);
+        }
       }
     }
   };
@@ -147,36 +145,8 @@ const AppContextProvider = (props) => {
       setListSearchResult([...newResult]);
       // if there are currently stuff and the id does not match any existing, add to it
       // otherwise just copy newResult
-      let hasExistingResults = checkExistingResults(id, votedArr);
-      if (hasExistingResults) {
-        // if there are currently stuff, only add things that do not match ones that are in votedArr
-        let finalResult = [];
-        finalResult = createNewList(votedArr, listSearchResult);
-        setVotedArr([...finalResult]);
-      } else {
-        setVotedArr([...newResult]);
-      }
+      setVotedArr([...newResult]);
     }
-  };
-
-  const checkExistingResults = (id, votedList) => {
-    for (let i = 0; i < votedList; i++) {
-      let currID = votedList[i].imdbID;
-      if (currID === id) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const createNewList = (votedList, searchResult) => {
-    let arr = [];
-    for (let i = 0; i < votedList; i++) {
-      for (let j = 0; j < searchResult; j++) {
-        if (votedList[i] !== searchResult[j]) arr.push(searchResult[j]);
-      }
-    }
-    return arr;
   };
 
   return (
