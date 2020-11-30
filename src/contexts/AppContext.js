@@ -17,29 +17,29 @@ const AppContextProvider = (props) => {
   const [votedArr, setVotedArr] = useStickyState([], "votedList");
   const [searchTermArr, setSearchTermArr] = useStickyState([], "searchTerms");
 
-  // const otherList = JSON.parse(localStorage.getItem("MovieList"));
-  // console.log("does this list change? ", otherList);
-
   // fetching first time using s parameter for movie list search
   useEffect(() => {
-    const savedMovieList = JSON.parse(localStorage.getItem("MovieList"));
-    console.log("saved movies: ", savedMovieList);
-    const matched = isInSearchTermArr(title, searchTermArr);
+    console.log("current title is: ", title);
     // ideally want to be able to see that term matched, and find the array of objects under matched term in votedList
-    // if (matched) {
-    //   console.log("there is a match in useEffect");
-    //   setListSearchResult(savedMovieList);
-    // } else {
-    const fetchList = async () => {
-      const response = await Axios(listSearchUrl);
-      const movies = response.data["Search"] || [];
-      const uniqueMovies = filterUniqueMovies(movies);
-      setListSearchResult(uniqueMovies);
-      // may need something to clear out duplicate searches?
-      setSearchTermArr([...searchTermArr, title]);
-    };
-    fetchList();
-    // }
+    // if current title matches any one of the existing titles in votedArr, set searchResult as the existing array instead of another api call
+    const isSearchednVotedOn = checkIfInVotedArr(title, votedArr);
+
+    if (isSearchednVotedOn) {
+      console.log("there is a match!");
+      const matchedResult = votedArr[isSearchednVotedOn[1]][title];
+      console.log(matchedResult);
+      setListSearchResult([...matchedResult]);
+    } else {
+      const fetchList = async () => {
+        const response = await Axios(listSearchUrl);
+        const movies = response.data["Search"] || [];
+        const uniqueMovies = filterUniqueMovies(movies);
+        setListSearchResult(uniqueMovies);
+        // may need something to clear out duplicate searches?
+        setSearchTermArr([...searchTermArr, title]);
+      };
+      fetchList();
+    }
   }, [listSearchUrl]);
 
   // fetching only when list search result has updated?
@@ -164,15 +164,15 @@ const AppContextProvider = (props) => {
     }
   };
 
-  const isInSearchTermArr = (term, arr) => {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] === term) {
-        console.log("IN FUNCTION OF: term searched before!");
-        return true;
-      }
-    }
-    return false;
-  };
+  // const isInSearchTermArr = (term, arr) => {
+  //   for (let i = 0; i < arr.length; i++) {
+  //     if (arr[i] === term) {
+  //       console.log("IN FUNCTION OF: term searched before!");
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // };
 
   const checkIfInVotedArr = (selectedTitle, votedArr) => {
     // const lowerCased = selectedTitle.toLowerCase();
