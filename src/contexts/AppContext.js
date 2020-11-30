@@ -17,30 +17,35 @@ const AppContextProvider = (props) => {
   const [votedArr, setVotedArr] = useStickyState([], "votedList");
   const [searchTermArr, setSearchTermArr] = useStickyState([], "searchTerms");
 
+  // const otherList = JSON.parse(localStorage.getItem("MovieList"));
+  // console.log("does this list change? ", otherList);
+
   // fetching first time using s parameter for movie list search
   useEffect(() => {
     const savedMovieList = JSON.parse(localStorage.getItem("MovieList"));
     console.log("saved movies: ", savedMovieList);
     const matched = isInSearchTermArr(title, searchTermArr);
     // ideally want to be able to see that term matched, and find the array of objects under matched term in votedList
-    if (matched) {
-      setListSearchResult(savedMovieList);
-    } else {
-      const fetchList = async () => {
-        const response = await Axios(listSearchUrl);
-        const movies = response.data["Search"] || [];
-        const uniqueMovies = filterUniqueMovies(movies);
-        setListSearchResult(uniqueMovies);
-        setSearchTermArr([...searchTermArr, title]);
-      };
-      fetchList();
-    }
+    // if (matched) {
+    //   console.log("there is a match in useEffect");
+    //   setListSearchResult(savedMovieList);
+    // } else {
+    const fetchList = async () => {
+      const response = await Axios(listSearchUrl);
+      const movies = response.data["Search"] || [];
+      const uniqueMovies = filterUniqueMovies(movies);
+      setListSearchResult(uniqueMovies);
+      // may need something to clear out duplicate searches?
+      setSearchTermArr([...searchTermArr, title]);
+    };
+    fetchList();
+    // }
   }, [listSearchUrl]);
 
   // fetching only when list search result has updated?
-  useEffect(() => {
-    localStorage.setItem("MovieList", JSON.stringify(listSearchResult));
-  }, [listSearchResult]);
+  // useEffect(() => {
+  //   localStorage.setItem("MovieList", JSON.stringify(listSearchResult));
+  // }, [listSearchResult]);
 
   // fetching second time using i parameter for movie imdbID search
   useEffect(() => {
@@ -66,16 +71,6 @@ const AppContextProvider = (props) => {
     return uniqueMovies;
   };
 
-  const isInSearchTermArr = (term, arr) => {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] === term) {
-        console.log("term searched before!");
-        return true;
-      }
-    }
-    return false;
-  };
-
   const handleFlip = (id) => {
     setSelectedSearchUrl(API_URL + `&i=${id}`);
     const flippedMovieToAdd = listSearchResult.find(
@@ -97,56 +92,99 @@ const AppContextProvider = (props) => {
 
   const handleUpCount = (id) => {
     const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-    // console.log("UP selected === ", selectedMovie);
+    // console.log("UP selected === ", selectedMovie.Title);
     let obj = {};
-    if (selectedMovie.up) {
+    obj[id] = { up: true, down: true };
+    // eslint-disable-next-line no-unused-expressions
+    selectedMovie.up
+      ? ((selectedMovie.up += 1), setDisabled({ ...disabled, obj }))
+      : ((selectedMovie.up = 1), setDisabled({ ...disabled, obj }));
+
+    // setting up a new array to account for the new votes
+    const newResult = [];
+    listSearchResult.forEach((movie) =>
+      movie.imdbID === selectedMovie
+        ? newResult.push(selectedMovie)
+        : newResult.push(movie)
+    );
+    // setListSearchResult([...newResult]);
+
+    // initial set up should be [{searchTerm: [array of objects]}, {searchTerm: [arr of obj]}]
+    const movieObj = {};
+    movieObj[title] = [...newResult];
+
+    // check if movie title is included in the votedArr list
+    const selectedTitle = selectedMovie.Title.toLowerCase();
+    const isInVotedArr = checkIfInVotedArr(selectedTitle, votedArr);
+
+    if (isInVotedArr) {
+      const index = isInVotedArr[1];
+      let newArr = [];
+      votedArr.forEach((obj, i) =>
+        i === index ? newArr.push(movieObj) : newArr.push(obj)
+      );
+      setVotedArr([...newArr]);
     } else {
-      if (selectedMovie) {
-        // eslint-disable-next-line no-unused-expressions
-        selectedMovie.up
-          ? ((selectedMovie.up += 1),
-            (obj[id] = { up: true, down: false }),
-            setDisabled({ ...disabled, obj }))
-          : ((selectedMovie.up = 1),
-            (obj[id] = { up: false, down: true }),
-            setDisabled({ ...disabled, obj }));
-        const newResult = [];
-        listSearchResult.forEach((movie) =>
-          movie.imdbID === selectedMovie
-            ? newResult.push(selectedMovie)
-            : newResult.push(movie)
-        );
-        setListSearchResult([...newResult]);
-        // initial set up should be [{searchTerm: [array of objects]}, {searchTerm: [arr of obj]}]
-        console.log("search term: ", title);
-        const movieObj = {};
-        movieObj[title] = [...newResult];
-        console.log(movieObj);
-        if (votedArr.length === 0) {
-          setVotedArr([movieObj]);
-        } else {
-          setVotedArr([...votedArr, movieObj]);
-        }
-      }
+      setVotedArr([...votedArr, movieObj]);
     }
   };
 
   const handleDownCount = (id) => {
     const selected = listSearchResult.find((movie) => movie.imdbID === id);
     // console.log("DOWN selected ===  ", selected);
-    if (selected) {
-      selected.down ? (selected.down += 1) : (selected.down = 1);
-      const newResult = [];
-      listSearchResult.forEach((movie) =>
-        movie.imdbID === selected
-          ? newResult.push(selected)
-          : newResult.push(movie)
+    let obj = {};
+    obj[id] = { up: true, down: true };
+    // eslint-disable-next-line no-unused-expressions
+    selected.down
+      ? ((selected.down += 1), setDisabled({ ...disabled, obj }))
+      : ((selected.down = 1), setDisabled({ ...disabled, obj }));
+
+    const newResult = [];
+    listSearchResult.forEach((movie) =>
+      movie.imdbID === selected
+        ? newResult.push(selected)
+        : newResult.push(movie)
+    );
+
+    const movieObj = {};
+    movieObj[title] = [...newResult];
+
+    const selectedTitle = selected.Title.toLowerCase();
+    const isInVotedArr = checkIfInVotedArr(selectedTitle, votedArr);
+
+    if (isInVotedArr) {
+      const index = isInVotedArr[1];
+      const newArr = [];
+      votedArr.forEach((obj, i) =>
+        i === index ? newArr.push(movieObj) : newArr.push(obj)
       );
-      setListSearchResult([...newResult]);
-      // if there are currently stuff and the id does not match any existing, add to it
-      // otherwise just copy newResult
-      setVotedArr([...newResult]);
+      setVotedArr([...newArr]);
+    } else {
+      setVotedArr([...votedArr, movieObj]);
     }
+  };
+
+  const isInSearchTermArr = (term, arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === term) {
+        console.log("IN FUNCTION OF: term searched before!");
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkIfInVotedArr = (selectedTitle, votedArr) => {
+    // const lowerCased = selectedTitle.toLowerCase();
+    for (let i = 0; i < votedArr.length; i++) {
+      const filmObj = votedArr[i];
+      const filmTitle = Object.keys(filmObj)[0].toLowerCase();
+      if (selectedTitle.includes(filmTitle)) {
+        console.log("there is a match in title in votedArray");
+        return [true, i];
+      }
+    }
+    return false;
   };
 
   return (
