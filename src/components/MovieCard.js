@@ -5,15 +5,9 @@ import DetailFront from "./DetailFront";
 import DetailBack from "./DetailBack";
 
 const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
-  const {
-    selected,
-    handleFlip,
-    handleUpCount,
-    handleDownCount,
-    // disabled,
-  } = useContext(AppContext);
-  // const upBtnStatus = disabled;
-  // console.log("UP BUTTON STATUS: ", upBtnStatus);
+  const { selected, handleFlip, handleUpCount, handleDownCount } = useContext(
+    AppContext
+  );
 
   return (
     <MovieCardContainer>
@@ -22,7 +16,6 @@ const MovieCard = ({ title, year, id, up, down, poster, flipped }) => {
           <MovieCardButton onClick={() => handleFlip(id)}>
             {selected.find((movie) => movie.imdbID === id) &&
             flipped === true ? (
-              // {selected.imdbID === id ? (
               <DetailBack id={id} />
             ) : (
               <DetailFront

@@ -19,14 +19,13 @@ const AppContextProvider = (props) => {
 
   // fetching first time using s parameter for movie list search
   useEffect(() => {
-    console.log("current title is: ", title);
-    // ideally want to be able to see that term matched, and find the array of objects under matched term in votedList
     // if current title matches any one of the existing titles in votedArr, set searchResult as the existing array instead of another api call
-    const isSearchednVotedOn = checkIfInVotedArr(title, votedArr);
+    const currentSearchTerm = title.toLowerCase();
+    const isSearchednVotedOn = checkIfInVotedArr(currentSearchTerm, votedArr);
 
     if (isSearchednVotedOn) {
       console.log("there is a match!");
-      const matchedResult = votedArr[isSearchednVotedOn[1]][title];
+      const matchedResult = votedArr[isSearchednVotedOn[1]][currentSearchTerm];
       console.log(matchedResult);
       setListSearchResult([...matchedResult]);
     } else {
