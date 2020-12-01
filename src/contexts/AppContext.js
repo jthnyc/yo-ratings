@@ -24,9 +24,7 @@ const AppContextProvider = (props) => {
     const isSearchednVotedOn = checkIfInVotedArr(currentSearchTerm, votedArr);
 
     if (isSearchednVotedOn) {
-      // console.log("there is a match!");
       const matchedResult = votedArr[isSearchednVotedOn[1]][currentSearchTerm];
-      console.log(matchedResult);
       setListSearchResult([...matchedResult]);
     } else {
       const fetchList = async () => {
