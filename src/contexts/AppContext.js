@@ -24,7 +24,7 @@ const AppContextProvider = (props) => {
     const isSearchednVotedOn = checkIfInVotedArr(currentSearchTerm, votedArr);
 
     if (isSearchednVotedOn) {
-      console.log("there is a match!");
+      // console.log("there is a match!");
       const matchedResult = votedArr[isSearchednVotedOn[1]][currentSearchTerm];
       console.log(matchedResult);
       setListSearchResult([...matchedResult]);
@@ -34,17 +34,12 @@ const AppContextProvider = (props) => {
         const movies = response.data["Search"] || [];
         const uniqueMovies = filterUniqueMovies(movies);
         setListSearchResult(uniqueMovies);
-        // may need something to clear out duplicate searches?
         setSearchTermArr([...searchTermArr, title]);
       };
       fetchList();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listSearchUrl]);
-
-  // fetching only when list search result has updated?
-  // useEffect(() => {
-  //   localStorage.setItem("MovieList", JSON.stringify(listSearchResult));
-  // }, [listSearchResult]);
 
   // fetching second time using i parameter for movie imdbID search
   useEffect(() => {
@@ -91,7 +86,6 @@ const AppContextProvider = (props) => {
 
   const handleUpCount = (id) => {
     const selectedMovie = listSearchResult.find((movie) => movie.imdbID === id);
-    // console.log("UP selected === ", selectedMovie.Title);
     let obj = {};
     obj[id] = { up: true, down: true };
     // eslint-disable-next-line no-unused-expressions
@@ -106,9 +100,8 @@ const AppContextProvider = (props) => {
         ? newResult.push(selectedMovie)
         : newResult.push(movie)
     );
-    // setListSearchResult([...newResult]);
 
-    // initial set up should be [{searchTerm: [array of objects]}, {searchTerm: [arr of obj]}]
+    // initial set up should be [{searchTerm: [array of objects]}]
     const movieObj = {};
     movieObj[title] = [...newResult];
 
@@ -130,7 +123,6 @@ const AppContextProvider = (props) => {
 
   const handleDownCount = (id) => {
     const selected = listSearchResult.find((movie) => movie.imdbID === id);
-    // console.log("DOWN selected ===  ", selected);
     let obj = {};
     obj[id] = { up: true, down: true };
     // eslint-disable-next-line no-unused-expressions
@@ -163,23 +155,11 @@ const AppContextProvider = (props) => {
     }
   };
 
-  // const isInSearchTermArr = (term, arr) => {
-  //   for (let i = 0; i < arr.length; i++) {
-  //     if (arr[i] === term) {
-  //       console.log("IN FUNCTION OF: term searched before!");
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
-
   const checkIfInVotedArr = (selectedTitle, votedArr) => {
-    // const lowerCased = selectedTitle.toLowerCase();
     for (let i = 0; i < votedArr.length; i++) {
       const filmObj = votedArr[i];
       const filmTitle = Object.keys(filmObj)[0].toLowerCase();
       if (selectedTitle.includes(filmTitle)) {
-        console.log("there is a match in title in votedArray");
         return [true, i];
       }
     }
@@ -193,6 +173,7 @@ const AppContextProvider = (props) => {
         title,
         setTitle,
         setListSearchUrl,
+        setSearchTermArr,
         API_URL,
         selected,
         disabled,
