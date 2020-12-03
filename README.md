@@ -1,7 +1,6 @@
 # YearOne Movie Ratings
 
-## YO-Ratings is a single page application to rate movies
-
+YO-Ratings is a single page application to rate movies\
 [Deployed Site Link](https://yo-ratings-git-main.joannathuang.vercel.app/)
 
 ## Getting Started
@@ -31,6 +30,6 @@
 
 ### Vote will persist through renewed search:
 
-![Vote persist through new search](demo/y1Be6JHT0R.gif)
+![Vote persist through new search](demo/y1Be6JHT0R.gif)\
 
 Created by [Joanna Huang](https://github.com/jthnyc)
