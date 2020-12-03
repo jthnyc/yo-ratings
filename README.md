@@ -30,6 +30,6 @@ YO-Ratings is a single page application to rate movies\
 
 ### Vote will persist through renewed search:
 
-![Vote persist through new search](demo/y1Be6JHT0R.gif)\
+![Vote persist through new search](demo/y1Be6JHT0R.gif)
 
 Created by [Joanna Huang](https://github.com/jthnyc)
