@@ -2,9 +2,7 @@
 
 ## YO-Ratings is a single page application to rate movies
 
-- [Deployed Site Link](https://yo-ratings-git-main.joannathuang.vercel.app/)
-- Created by [Joanna Huang](https://github.com/jthnyc)
-- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[Deployed Site Link](https://yo-ratings-git-main.joannathuang.vercel.app/)
 
 ## Getting Started
 
@@ -21,8 +19,18 @@
 
 ### Users can click on the movie poster to view more details:
 
+![Movie Details](demo/J4JE8Ufk6h.gif)
+
 ### Users can upvote or downvote the movie:
+
+![Upvote and Downvote](demo/hjQeRBcu81.gif)
 
 ### Vote record will persist after page refresh:
 
+![Vote record persists post refresh](demo/bO4OI25Kku.gif)
+
 ### Vote will persist through renewed search:
+
+![Vote persist through new search](demo/y1Be6JHT0R.gif)
+
+Created by [Joanna Huang](https://github.com/jthnyc)
